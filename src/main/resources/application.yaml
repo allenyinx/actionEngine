@@ -1,0 +1,44 @@
+spring:
+  profiles:
+    active: dev
+server:
+  port: 8201
+app:
+  name: ActionEngine
+  description: ${app.name} with Spring Boot boosted.
+
+---
+spring:
+  profiles: dev
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    timeout: 2000
+kafka:
+  consumer:
+    zookeeper:
+      connect: localhost:32028
+    servers: localhost:31090,localhost:31091,localhost:31092
+    enable:
+      auto:
+        commit: true
+    session:
+      timeout: 6000
+    auto:
+      commit:
+        interval: 100
+      offset:
+        reset: latest
+    topic: flow
+    group:
+      id: test
+    concurrency: 10
+  producer:
+    servers: localhost:31090,localhost:31091,localhost:31092
+    retries: 0
+    batch:
+      size: 4096
+    linger: 1
+    buffer:
+      memory: 40960
+
