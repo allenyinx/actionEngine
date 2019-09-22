@@ -1,4 +1,4 @@
-package com.airta.action.engine.message;
+package com.airta.action.engine.config.kafka;
 
 import com.airta.action.engine.message.flow.FlowSubscriber;
 import org.apache.kafka.clients.consumer.ConsumerConfig;

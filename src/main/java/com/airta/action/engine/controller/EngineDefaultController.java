@@ -22,11 +22,11 @@ public class EngineDefaultController {
     private KafkaTemplate kafkaTemplate;
 
     @GetMapping(value = "/alive")
-    public HttpStatus checkMessageStatus(HttpServletRequest request) {
+    public HttpStatus checkMessageStatus() {
         try {
-            String message = request.getParameter("message");
+            String message = "test for flow message";
             logger.info("kafka message ={}", message);
-            kafkaTemplate.send("test", "key", message);
+            kafkaTemplate.send("flow", "key", message);
             logger.info("sending to kafka successfully");
             return HttpStatus.ACCEPTED;
         } catch (Exception e) {

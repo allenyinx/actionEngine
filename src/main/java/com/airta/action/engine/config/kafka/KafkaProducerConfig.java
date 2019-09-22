@@ -1,4 +1,4 @@
-package com.airta.action.engine.message;
+package com.airta.action.engine.config.kafka;
 
 import java.util.HashMap;
 import java.util.Map;

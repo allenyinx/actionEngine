@@ -39,6 +39,7 @@ kafka:
     batch:
       size: 4096
     linger: 1
+    topic: action
     buffer:
       memory: 40960
 
