@@ -1,6 +1,6 @@
 package com.airta.action.engine.model;
 
-import com.airta.action.engine.entity.ActionResult;
+import com.airta.action.engine.entity.action.ActionResult;
 
 import java.io.IOException;
 

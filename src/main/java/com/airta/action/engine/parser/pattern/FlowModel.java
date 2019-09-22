@@ -1,17 +1,19 @@
 package com.airta.action.engine.parser.pattern;
 
-import com.airta.action.engine.entity.ActionResult;
-import com.airta.action.engine.model.Capturable;
-import com.airta.action.engine.model.Datalize;
-import com.airta.action.engine.model.Operatable;
-import com.airta.action.engine.model.Pathable;
+import com.airta.action.engine.entity.action.ActionPath;
+import com.airta.action.engine.entity.action.ActionResult;
+import com.airta.action.engine.entity.ResultType;
+import com.airta.action.engine.entity.action.DataContext;
+import com.airta.action.engine.entity.action.PageContext;
+import com.airta.action.engine.model.*;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author allenyin
  */
-public class FlowModel implements Operatable, Datalize, Pathable, Capturable {
+public class FlowModel implements Operatable, Datalize, Pathable, Capturable, Recyclable {
 
     @Override
     public void read() {
@@ -25,6 +27,36 @@ public class FlowModel implements Operatable, Datalize, Pathable, Capturable {
 
     @Override
     public ActionResult result() {
+        return null;
+    }
+
+    @Override
+    public List<ResultType> requiredResults() throws IOException {
+        return null;
+    }
+
+    @Override
+    public ResultType capture() throws IOException {
+        return null;
+    }
+
+    @Override
+    public void setPath(ActionPath actionPath) throws IOException {
+
+    }
+
+    @Override
+    public ActionPath getPath() {
+        return null;
+    }
+
+    @Override
+    public List<PageContext> getFurtherPageContexts() {
+        return null;
+    }
+
+    @Override
+    public List<DataContext> returnCurrentDataContext() {
         return null;
     }
 }

@@ -1,4 +1,4 @@
 package com.airta.action.engine.entity;
 
-public class ActionResult {
+public interface ResultType {
 }
