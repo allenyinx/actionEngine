@@ -1,4 +1,4 @@
-package com.airta.action.engine.parser.pattern;
+package com.airta.action.engine.parser;
 
 import com.airta.action.engine.entity.action.ActionPath;
 import com.airta.action.engine.entity.action.ActionResult;
@@ -13,11 +13,16 @@ import java.util.List;
 /**
  * @author allenyin
  */
-public class FlowModel implements Operatable, Datalize, Pathable, Capturable, Recyclable {
+public class FlowModel implements Operatable, Datalizable, Pathable, Catchable, Recyclable {
 
     @Override
     public void read() {
 
+    }
+
+    @Override
+    public String printData() {
+        return null;
     }
 
     @Override
@@ -58,5 +63,10 @@ public class FlowModel implements Operatable, Datalize, Pathable, Capturable, Re
     @Override
     public List<DataContext> returnCurrentDataContext() {
         return null;
+    }
+
+    @Override
+    public boolean recycle() {
+        return false;
     }
 }

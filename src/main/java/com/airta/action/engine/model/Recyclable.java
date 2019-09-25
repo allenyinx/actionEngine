@@ -15,4 +15,6 @@ public interface Recyclable {
     List<PageContext> getFurtherPageContexts();
 
     List<DataContext> returnCurrentDataContext();
+
+    boolean recycle();
 }

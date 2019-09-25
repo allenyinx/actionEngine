@@ -1,16 +1,16 @@
-package com.airta.action.engine.parser;
+package com.airta.action.engine.parser.pattern;
 
 import com.airta.action.engine.entity.Action;
 import com.airta.action.engine.entity.flow.FlowScript;
-import com.airta.action.engine.parser.pattern.FlowModel;
-import com.airta.action.engine.parser.pattern.FlowPattern;
+import com.airta.action.engine.parser.FlowModel;
+import com.airta.action.engine.parser.FlowPattern;
 
 import java.util.List;
 
 /**
  * @author allenyin
  */
-public interface FlowParser {
+public interface IFlowParser {
 
     /**
      * @param flowPatternList
@@ -30,5 +30,12 @@ public interface FlowParser {
     List<Action> parse(FlowScript flowScript);
 
     List<Action> parse(List<FlowScript> flowScriptList);
+
+    /**
+     * record the parse history.
+     * @param flowScript
+     * @return add record result
+     */
+    boolean record(FlowScript flowScript);
 
 }
