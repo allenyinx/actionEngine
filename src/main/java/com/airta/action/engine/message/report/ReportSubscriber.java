@@ -34,7 +34,7 @@ public class ReportSubscriber {
                 logger.info("## now we resolved report element: {}", rootElement);
                 List elementList = new ArrayList(){};
                 elementList.add(rootElement);
-                elementToJsonFile(elementList);
+                jsonParser.elementToJsonFile(elementList);
             }
         }
 
@@ -62,17 +62,14 @@ public class ReportSubscriber {
         children.add(element_04);
         element.setChildren(children);
         rootList.add(element);
-        reportSubscriber.elementToJsonFile(rootList);
+
+        reportSubscriber.writeToFile(rootList);
     }
 
-    private void elementToJsonFile(List rootElement) {
-
-        File report = new File("/Users//Documents/IdeaProjects/actionEngine/sitemap/root.json");
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            mapper.writeValue(report, rootElement);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void writeToFile(List<Element> rootList) {
+//        jsonParser.elementToJsonFile(rootList);
+        jsonParser.updateToJsonFile();
     }
+
+
 }

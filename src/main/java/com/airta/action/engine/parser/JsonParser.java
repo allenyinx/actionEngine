@@ -1,5 +1,6 @@
 package com.airta.action.engine.parser;
 
+import com.airta.action.engine.entity.report.Element;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
@@ -11,13 +12,16 @@ import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 @Component
 public class JsonParser {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final String TreeJsonPath = "sitemap/root.json";
 
     public String objectToJSONString(Object jsonObject) {
 
@@ -34,7 +38,7 @@ public class JsonParser {
 
     public Object resolveIncomingMessage(String value, Class objectClass) {
 
-//        logger.info("message {} resolved. ", value);
+        logger.info("message {} resolved. ", value);
         try {
             logger.info(OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(value));
         } catch (JsonProcessingException e) {
@@ -112,5 +116,34 @@ public class JsonParser {
     private String format(String input) {
 
         return StringUtils.trimAllWhitespace(input);
+    }
+
+    public void elementToJsonFile(List rootElement) {
+
+        File report = new File(TreeJsonPath);
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            mapper.writeValue(report, rootElement);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateToJsonFile() {
+
+        File report = new File(TreeJsonPath);
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            List obj = mapper.readValue(report, List.class);
+            if(obj!=null) {
+                List<Element> elementList = (List<Element>)obj;
+                logger.info("## Element list children size: {}", elementList.size());
+                List<Element> childrenList = elementList.get(0).getChildren();
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }
