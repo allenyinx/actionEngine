@@ -130,7 +130,7 @@ public class Element implements Serializable {
     }
 
     public String getText() {
-        return text;
+        return elementId;
     }
 
     public void setText(String text) {

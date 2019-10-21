@@ -558,7 +558,7 @@
 				redraw_timeout : false,
 				default_state : {
 					loaded : true,
-					opened : false,
+					opened : true,
 					selected : false,
 					disabled : false
 				}

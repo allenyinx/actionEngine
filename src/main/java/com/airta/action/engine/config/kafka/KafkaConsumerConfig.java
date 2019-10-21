@@ -61,9 +61,9 @@ public class KafkaConsumerConfig {
         propsMap.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         propsMap.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         propsMap.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-        propsMap.put(ConsumerConfig.FETCH_MAX_WAIT_MS_CONFIG, 60000);
-        propsMap.put(ConsumerConfig.REQUEST_TIMEOUT_MS_CONFIG, 70000);
-        propsMap.put(ConsumerConfig.FETCH_MIN_BYTES_CONFIG, 999999999);
+//        propsMap.put(ConsumerConfig.FETCH_MAX_WAIT_MS_CONFIG, 60000);
+//        propsMap.put(ConsumerConfig.REQUEST_TIMEOUT_MS_CONFIG, 70000);
+//        propsMap.put(ConsumerConfig.FETCH_MIN_BYTES_CONFIG, 999999999);
         return propsMap;
     }
 
@@ -73,7 +73,7 @@ public class KafkaConsumerConfig {
 //    }
 
     @Bean
-    public ReportSubscriber reportSubscriberlistener() {
+    public ReportSubscriber listener() {
         return new ReportSubscriber();
     }
 
