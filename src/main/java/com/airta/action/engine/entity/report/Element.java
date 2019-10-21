@@ -21,6 +21,9 @@ public class Element implements Serializable {
     private boolean isWorkingOn = false;
     private String url;
 
+    private int id = 0;
+    private String text;
+
     public String toString() {
 
         return "\n[" + "\n" +
@@ -116,5 +119,21 @@ public class Element implements Serializable {
 
     public void setType(ElementType type) {
         this.type = type;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 }

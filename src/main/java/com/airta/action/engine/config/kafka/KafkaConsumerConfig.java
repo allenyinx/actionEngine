@@ -44,7 +44,7 @@ public class KafkaConsumerConfig {
         ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         factory.setConcurrency(concurrency);
-        factory.getContainerProperties().setPollTimeout(1500);
+        factory.getContainerProperties().setPollTimeout(3000);
         return factory;
     }
 
@@ -61,7 +61,9 @@ public class KafkaConsumerConfig {
         propsMap.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         propsMap.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         propsMap.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-        propsMap.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, autoOffsetReset);
+        propsMap.put(ConsumerConfig.FETCH_MAX_WAIT_MS_CONFIG, 60000);
+        propsMap.put(ConsumerConfig.REQUEST_TIMEOUT_MS_CONFIG, 70000);
+        propsMap.put(ConsumerConfig.FETCH_MIN_BYTES_CONFIG, 999999999);
         return propsMap;
     }
 

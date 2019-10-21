@@ -33,6 +33,7 @@ kafka:
     group:
       id: test
     concurrency: 10
+
   producer:
     servers: 40.117.113.67:9092
     retries: 0

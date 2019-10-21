@@ -11,6 +11,8 @@ import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
+
 @Component
 public class JsonParser {
 
@@ -32,11 +34,13 @@ public class JsonParser {
 
     public Object resolveIncomingMessage(String value, Class objectClass) {
 
-        logger.info("message {} resolved. ", value);
+//        logger.info("message {} resolved. ", value);
         try {
             logger.info(OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(value));
         } catch (JsonProcessingException e) {
             logger.error(e.getMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         /**
