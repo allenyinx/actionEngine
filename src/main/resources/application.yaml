@@ -17,8 +17,8 @@ spring:
 kafka:
   consumer:
     zookeeper:
-      connect: localhost:32028
-    servers: localhost:31090,localhost:31091,localhost:31092
+      connect: 40.117.113.67:2181
+    servers: 40.117.113.67:9092
     enable:
       auto:
         commit: true
@@ -29,17 +29,17 @@ kafka:
         interval: 100
       offset:
         reset: latest
-    topic: flow
+    topic: report
     group:
       id: test
     concurrency: 10
   producer:
-    servers: localhost:31090,localhost:31091,localhost:31092
+    servers: 40.117.113.67:9092
     retries: 0
     batch:
       size: 4096
     linger: 1
-    topic: action
+    topic: report
     buffer:
       memory: 40960
 

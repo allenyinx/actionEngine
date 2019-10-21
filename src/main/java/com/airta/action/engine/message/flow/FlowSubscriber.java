@@ -12,7 +12,7 @@ public class FlowSubscriber {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @KafkaListener(topics = {"flow"})
+//    @KafkaListener(topics = {"flow"})
     public void listen(ConsumerRecord<?, ?> record) {
         logger.info("listen flow topic: " + record.key());
         logger.info("listen flow topic value: " + record.value().toString());
