@@ -1,0 +1,10 @@
+language: java
+
+jdk:
+  - openjdk8
+
+script:
+  mvn clean compile cobertura:cobertura -Dspring.profiles.active=test
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)

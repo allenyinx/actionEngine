@@ -5,13 +5,13 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.1.7.RELEASE</version>
+		<version>2.2.0.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.airta</groupId>
-	<artifactId>airgent</artifactId>
-	<version>0.0.2</version>
-	<name>airgent</name>
+	<artifactId>actionengine</artifactId>
+	<version>1.0.0</version>
+	<name>actionengine</name>
 	<description>Action Engine for Airta</description>
 
 	<properties>
@@ -238,6 +238,18 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.7</version>
+				<configuration>
+					<formats>
+						<format>html</format>
+						<format>xml</format>
+					</formats>
+					<check />
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

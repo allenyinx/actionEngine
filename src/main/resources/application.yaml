@@ -6,6 +6,14 @@ server:
 app:
   name: ActionEngine
   description: ${app.name} with Spring Boot boosted.
+logging:
+  level:
+    org.springframework.web: INFO
+    org.apache.kafka: WARN
+    org.springframework.kafka.listener: WARN
+  file:
+    name: logs/actionengine.log
+    path: logs
 
 ---
 spring:
@@ -14,6 +22,38 @@ spring:
     host: 127.0.0.1
     port: 6379
     timeout: 2000
+kafka:
+  consumer:
+    zookeeper:
+      connect: 40.117.113.67:2181
+    servers: 40.117.113.67:9092
+    enable:
+      auto:
+        commit: true
+    session:
+      timeout: 6000
+    auto:
+      commit:
+        interval: 100
+      offset:
+        reset: latest
+    topic: report
+    group:
+      id: test
+    concurrency: 10
+
+  producer:
+    servers: 40.117.113.67:9092
+    retries: 0
+    batch:
+      size: 4096
+    linger: 1
+    topic: report
+    buffer:
+      memory: 40960
+---
+spring:
+  profiles: test
 kafka:
   consumer:
     zookeeper:
