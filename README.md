@@ -19,20 +19,17 @@ Engine for schedule, manage action agent.
 
 
 ## Features
-* Crawler for deep links
-* Headless Chromium
-* WebDriver
-* Report
-* Kafka message consumer
-* Screenshots
-* Log, reports, console info
-* Produce kafka message to sitemap
-* Parse and exec kinds of actions
+* Listen for Flow Script messages
+* Parsing flow scripts to action list
+* Produce action messages for agent to consume and execute
+* Sitemap store, update, present
+* Agent Pool
+* Initiate and schedule Action Agent
 
-Install
+Launch
 =======
 
-The quick way::
+The quick way:
 
     docker run airta/actionengine:latest
 
