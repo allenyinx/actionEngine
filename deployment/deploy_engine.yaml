@@ -34,7 +34,7 @@ spec:
               containerPort: 8202
           volumeMounts:
             - name: sharedata
-              mountPath: /share
+              mountPath: /usr/share/nginx/html/data
 ---
 apiVersion: v1
 kind: Service

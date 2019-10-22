@@ -51,7 +51,7 @@ kafka:
     buffer:
       memory: 40960
 engine:
-  share: /share/sitemap.json
+  share: /usr/share/nginx/html/data/sitemap.json
 ---
 spring:
   profiles: local
