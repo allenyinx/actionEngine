@@ -25,8 +25,7 @@ public class JsonParser {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    private ObjectMapper OBJECT_MAPPER;
+    private ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Value("${engine.share}")
     private String TreeJsonPath;
