@@ -6,7 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,11 +18,13 @@ import java.util.List;
 /**
  * @author allenyin
  */
+@Service
 public class ReportSubscriber {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private JsonParser jsonParser = new JsonParser();
+    @Autowired
+    private JsonParser jsonParser;
 
     @KafkaListener(topics = {"report"})
     public void listen(ConsumerRecord<?, ?> record) {
