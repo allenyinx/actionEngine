@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author allenyin
  */
 @RestController
-@RequestMapping("/engine")
+@RequestMapping("/api")
 public class EngineDefaultController {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -28,7 +28,7 @@ public class EngineDefaultController {
             logger.info("kafka message ={}", message);
             kafkaTemplate.send("flow", "key", message);
             logger.info("sending to kafka successfully");
-            return HttpStatus.ACCEPTED;
+            return HttpStatus.OK;
         } catch (Exception e) {
             logger.error("sending to kafka fail", e);
         }
@@ -38,7 +38,7 @@ public class EngineDefaultController {
     @GetMapping(value = "/version")
     public Object checkVersion() {
 
-        return "v0.0.1";
+        return "phase1_1.0.0";
     }
 
 }

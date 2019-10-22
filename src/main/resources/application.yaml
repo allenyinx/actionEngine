@@ -88,7 +88,7 @@ kafka:
     buffer:
       memory: 40960
 engine:
-  share: sitemap/sitemap.json
+  share: temp/sitemap.json
 ---
 spring:
   profiles: test
