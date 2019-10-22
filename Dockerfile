@@ -9,6 +9,7 @@ ARG VERSION
 
 LABEL org.label-schema.build-date=$BUILD_DATE \
       org.label-schema.name="ActionEngine" \
+      authors="Allen Yin" \
       org.label-schema.description="action engine to handle flow message resolve and action agent management." \
       org.label-schema.url="http://www.airta.co" \
       org.label-schema.vcs-ref=$VCS_REF \
