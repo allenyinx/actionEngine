@@ -245,3 +245,37 @@ Caused by: java.lang.NoSuchMethodError: org.springframework.plugin.core.PluginRe
 2019-10-22 10:35:33.267  INFO 17860 --- [org.springframework.kafka.KafkaListenerEndpointContainer#0-9-C-1] o.s.s.c.ThreadPoolTaskScheduler          : Shutting down ExecutorService
 2019-10-22 10:35:33.267  INFO 17860 --- [org.springframework.kafka.KafkaListenerEndpointContainer#0-2-C-1] o.s.s.c.ThreadPoolTaskScheduler          : Shutting down ExecutorService
 2019-10-22 10:35:34.953  INFO 17860 --- [SpringContextShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2019-10-22 11:05:06.442  INFO 18579 --- [main] c.a.a.e.ActionEngineApplicationTests     : Starting ActionEngineApplicationTests on ZZZM58153300A with PID 18579 (started by i306445 in /Users/i306445/Documents/IdeaProjects/actionEngine)
+2019-10-22 11:05:06.443  INFO 18579 --- [main] c.a.a.e.ActionEngineApplicationTests     : The following profiles are active: dev
+2019-10-22 11:05:07.745  INFO 18579 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode!
+2019-10-22 11:05:07.751  INFO 18579 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data repositories in DEFAULT mode.
+2019-10-22 11:05:07.790  INFO 18579 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 18ms. Found 0 repository interfaces.
+2019-10-22 11:05:09.154  INFO 18579 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2019-10-22 11:05:09.458  WARN 18579 --- [main] ion$DefaultTemplateResolverConfiguration : Cannot find template location: classpath:/templates/ (please add some templates or check your Thymeleaf configuration)
+2019-10-22 11:05:10.708  INFO 18579 --- [main] io.lettuce.core.EpollProvider            : Starting without optional epoll library
+2019-10-22 11:05:10.710  INFO 18579 --- [main] io.lettuce.core.KqueueProvider           : Starting without optional kqueue library
+2019-10-22 11:05:11.237  WARN 18579 --- [main] o.s.b.a.f.FreeMarkerAutoConfiguration    : Cannot find template location(s): [classpath:/templates/] (please add some templates, check your FreeMarker configuration, or set spring.freemarker.checkTemplateLocation=false)
+2019-10-22 11:05:11.342  INFO 18579 --- [main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 2 endpoint(s) beneath base path '/actuator'
+2019-10-22 11:05:13.735  INFO 18579 --- [main] o.s.s.c.ThreadPoolTaskScheduler          : Initializing ExecutorService
+2019-10-22 11:05:13.751  INFO 18579 --- [main] o.s.s.c.ThreadPoolTaskScheduler          : Initializing ExecutorService
+2019-10-22 11:05:13.758  INFO 18579 --- [main] o.s.s.c.ThreadPoolTaskScheduler          : Initializing ExecutorService
+2019-10-22 11:05:13.766  INFO 18579 --- [main] o.s.s.c.ThreadPoolTaskScheduler          : Initializing ExecutorService
+2019-10-22 11:05:13.774  INFO 18579 --- [main] o.s.s.c.ThreadPoolTaskScheduler          : Initializing ExecutorService
+2019-10-22 11:05:13.781  INFO 18579 --- [main] o.s.s.c.ThreadPoolTaskScheduler          : Initializing ExecutorService
+2019-10-22 11:05:13.787  INFO 18579 --- [main] o.s.s.c.ThreadPoolTaskScheduler          : Initializing ExecutorService
+2019-10-22 11:05:13.793  INFO 18579 --- [main] o.s.s.c.ThreadPoolTaskScheduler          : Initializing ExecutorService
+2019-10-22 11:05:13.800  INFO 18579 --- [main] o.s.s.c.ThreadPoolTaskScheduler          : Initializing ExecutorService
+2019-10-22 11:05:13.805  INFO 18579 --- [main] o.s.s.c.ThreadPoolTaskScheduler          : Initializing ExecutorService
+2019-10-22 11:05:14.440  INFO 18579 --- [main] s.a.ScheduledAnnotationBeanPostProcessor : No TaskScheduler/ScheduledExecutorService bean found for scheduled processing
+2019-10-22 11:05:14.451  INFO 18579 --- [main] c.a.a.e.ActionEngineApplicationTests     : Started ActionEngineApplicationTests in 8.461 seconds (JVM running for 9.749)
+2019-10-22 11:05:14.856  INFO 18579 --- [org.springframework.kafka.KafkaListenerEndpointContainer#0-2-C-1] o.s.s.c.ThreadPoolTaskScheduler          : Shutting down ExecutorService
+2019-10-22 11:05:14.856  INFO 18579 --- [org.springframework.kafka.KafkaListenerEndpointContainer#0-8-C-1] o.s.s.c.ThreadPoolTaskScheduler          : Shutting down ExecutorService
+2019-10-22 11:05:14.856  INFO 18579 --- [org.springframework.kafka.KafkaListenerEndpointContainer#0-6-C-1] o.s.s.c.ThreadPoolTaskScheduler          : Shutting down ExecutorService
+2019-10-22 11:05:14.856  INFO 18579 --- [org.springframework.kafka.KafkaListenerEndpointContainer#0-5-C-1] o.s.s.c.ThreadPoolTaskScheduler          : Shutting down ExecutorService
+2019-10-22 11:05:14.856  INFO 18579 --- [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.s.s.c.ThreadPoolTaskScheduler          : Shutting down ExecutorService
+2019-10-22 11:05:14.856  INFO 18579 --- [org.springframework.kafka.KafkaListenerEndpointContainer#0-1-C-1] o.s.s.c.ThreadPoolTaskScheduler          : Shutting down ExecutorService
+2019-10-22 11:05:14.856  INFO 18579 --- [org.springframework.kafka.KafkaListenerEndpointContainer#0-9-C-1] o.s.s.c.ThreadPoolTaskScheduler          : Shutting down ExecutorService
+2019-10-22 11:05:14.856  INFO 18579 --- [org.springframework.kafka.KafkaListenerEndpointContainer#0-4-C-1] o.s.s.c.ThreadPoolTaskScheduler          : Shutting down ExecutorService
+2019-10-22 11:05:14.856  INFO 18579 --- [org.springframework.kafka.KafkaListenerEndpointContainer#0-7-C-1] o.s.s.c.ThreadPoolTaskScheduler          : Shutting down ExecutorService
+2019-10-22 11:05:14.856  INFO 18579 --- [org.springframework.kafka.KafkaListenerEndpointContainer#0-3-C-1] o.s.s.c.ThreadPoolTaskScheduler          : Shutting down ExecutorService
+2019-10-22 11:05:16.012  INFO 18579 --- [SpringContextShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'

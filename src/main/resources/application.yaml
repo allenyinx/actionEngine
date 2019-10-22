@@ -54,6 +54,10 @@ kafka:
 ---
 spring:
   profiles: test
+  redis:
+    host: 40.117.113.67
+    port: 6379
+    timeout: 2000
 kafka:
   consumer:
     zookeeper:

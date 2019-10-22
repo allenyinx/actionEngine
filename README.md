@@ -6,7 +6,7 @@
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=allenyinx_ActionAgent&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=allenyinx_ActionAgent)
 
 <p align="left">
-    <a href="https://codecov.io/gh/allenyinx/ActionAgent"><img src="https://codecov.io/gh/allenyinx/ActionAgent/branch/develop/graph/badge.svg" /></a>
+    <a href="https://codecov.io/gh/allenyinx/actionEngine"><img src="https://codecov.io/gh/allenyinx/actionEngine/branch/develop/graph/badge.svg" /></a>
     <a href='https://circleci.com/gh/allenyinx/ActionAgent/tree/develop'><img src='https://circleci.com/gh/allenyinx/ActionAgent/tree/develop.svg?style=svg'></a>
     <a href='https://sonarcloud.io/dashboard?id=allenyinx_ActionAgent'><img src='https://sonarcloud.io/api/project_badges/measure?project=allenyinx_ActionAgent&metric=alert_status'></a>
     <a href='https://travis-ci.org/allenyinx/actionEngine'><img src='https://travis-ci.org/allenyinx/actionEngine.svg?branch=develop'></a>
