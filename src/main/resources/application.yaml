@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: dev
+    active: prod
 server:
   port: 8201
 app:
@@ -17,7 +17,44 @@ logging:
 
 ---
 spring:
-  profiles: dev
+  profiles: prod
+  redis:
+    host: 40.117.113.67
+    port: 6379
+    timeout: 2000
+kafka:
+  consumer:
+    zookeeper:
+      connect: 40.117.113.67:2181
+    servers: 40.117.113.67:9092
+    enable:
+      auto:
+        commit: true
+    session:
+      timeout: 6000
+    auto:
+      commit:
+        interval: 100
+      offset:
+        reset: latest
+    topic: report
+    group:
+      id: test
+    concurrency: 10
+  producer:
+    servers: 40.117.113.67:9092
+    retries: 0
+    batch:
+      size: 4096
+    linger: 1
+    topic: report
+    buffer:
+      memory: 40960
+engine:
+  share: /share/sitemap.json
+---
+spring:
+  profiles: local
   redis:
     host: 127.0.0.1
     port: 6379
@@ -41,7 +78,6 @@ kafka:
     group:
       id: test
     concurrency: 10
-
   producer:
     servers: 40.117.113.67:9092
     retries: 0
@@ -51,6 +87,8 @@ kafka:
     topic: report
     buffer:
       memory: 40960
+engine:
+  share: sitemap/sitemap.json
 ---
 spring:
   profiles: test
@@ -77,7 +115,6 @@ kafka:
     group:
       id: test
     concurrency: 10
-
   producer:
     servers: 40.117.113.67:9092
     retries: 0
@@ -87,4 +124,5 @@ kafka:
     topic: report
     buffer:
       memory: 40960
-
+engine:
+  share: sitemap/sitemap.json

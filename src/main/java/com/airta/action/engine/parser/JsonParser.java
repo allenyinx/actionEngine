@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
@@ -22,8 +24,12 @@ import java.util.List;
 public class JsonParser {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-    private static final String TreeJsonPath = "sitemap/root.json";
+
+    @Autowired
+    private ObjectMapper OBJECT_MAPPER;
+
+    @Value("${engine.share}")
+    private String TreeJsonPath;
 
     public String objectToJSONString(Object jsonObject) {
 
