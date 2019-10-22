@@ -30,6 +30,19 @@ spec:
           ports:
             - name: rest
               containerPort: 8201
+          volumeMounts:
+            - name: sharedata
+              mountPath: /data
+        - name: sitemap
+          image: airta/airsitemap:latest
+          resources:
+            limits:
+              cpu: 2
+              memory: 4Gi
+            requests:
+              cpu: 100m
+              memory: 500Mi
+          ports:
             - name: http
               containerPort: 8202
           volumeMounts:
