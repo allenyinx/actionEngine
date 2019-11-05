@@ -41,7 +41,7 @@ public class EngineDefaultController {
     @GetMapping(value = "/version")
     public Object checkVersion() {
 
-        String currentTimestamp = new SimpleDateFormat("yyyy-MM-dd-HH-mm").format( new Date() );
+        String currentTimestamp = new SimpleDateFormat("yyyyMMddHHmm").format( new Date() );
         return "phase2_1."+currentTimestamp;
     }
 
