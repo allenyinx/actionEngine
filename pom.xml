@@ -104,6 +104,30 @@
 			<artifactId>gson</artifactId>
 			<version>2.8.5</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/io.fabric8/kubernetes-client -->
+<!--		<dependency>-->
+<!--			<groupId>io.fabric8</groupId>-->
+<!--			<artifactId>kubernetes-client</artifactId>-->
+<!--			<version>4.6.2</version>-->
+<!--		</dependency>-->
+<!--		&lt;!&ndash; https://mvnrepository.com/artifact/io.fabric8/kubernetes-api &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>io.fabric8</groupId>-->
+<!--			<artifactId>kubernetes-api</artifactId>-->
+<!--			<version>3.0.12</version>-->
+<!--		</dependency>-->
+		<!-- https://mvnrepository.com/artifact/io.kubernetes/client-java -->
+		<dependency>
+			<groupId>io.kubernetes</groupId>
+			<artifactId>client-java</artifactId>
+			<version>6.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-cli</groupId>
+			<artifactId>commons-cli</artifactId>
+			<version>1.4</version>
+		</dependency>
+
 
 	</dependencies>
 
