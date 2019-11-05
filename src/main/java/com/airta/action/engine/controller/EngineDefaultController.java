@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 /**
@@ -39,7 +41,8 @@ public class EngineDefaultController {
     @GetMapping(value = "/version")
     public Object checkVersion() {
 
-        return "phase2_1.0.2";
+        String currentTimestamp = new SimpleDateFormat("yyyy-MM-dd-HH-mm").format( new Date() );
+        return "phase2_1."+currentTimestamp;
     }
 
 }
