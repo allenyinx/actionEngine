@@ -39,7 +39,7 @@ public class EngineDefaultController {
     @GetMapping(value = "/version")
     public Object checkVersion() {
 
-        return "phase2_1.0.1";
+        return "phase2_1.0.2";
     }
 
 }

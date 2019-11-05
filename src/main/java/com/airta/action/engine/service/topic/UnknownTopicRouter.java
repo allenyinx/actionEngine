@@ -8,6 +8,8 @@ public class UnknownTopicRouter implements ITopicRouter {
 
     @Override
     public boolean actionOnTopic(Object incomingKeyObj, Object incomingValueObj) {
+
+        logger.info("## on unknown topic router ..");
         return false;
     }
 }

@@ -13,6 +13,7 @@ public class PoolTopicRouter implements ITopicRouter {
 
     @Override
     public boolean actionOnTopic(Object incomingKeyObj, Object incomingValueObj) {
+        logger.info("## on pool init topic router ..");
         return false;
     }
 }

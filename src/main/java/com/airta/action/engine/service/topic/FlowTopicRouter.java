@@ -13,6 +13,7 @@ public class FlowTopicRouter implements ITopicRouter {
 
     @Override
     public boolean actionOnTopic(Object incomingKeyObj, Object incomingValueObj) {
+        logger.info("## on flow topic router ..");
         return false;
     }
 }
