@@ -1,7 +1,6 @@
 package com.airta.action.engine.config.kafka;
 
-import com.airta.action.engine.message.flow.FlowSubscriber;
-import com.airta.action.engine.message.report.ReportSubscriber;
+import com.airta.action.engine.message.ActionSubscriber;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -73,8 +72,8 @@ public class KafkaConsumerConfig {
 //    }
 
     @Bean
-    public ReportSubscriber listener() {
-        return new ReportSubscriber();
+    public ActionSubscriber listener() {
+        return new ActionSubscriber();
     }
 
 }

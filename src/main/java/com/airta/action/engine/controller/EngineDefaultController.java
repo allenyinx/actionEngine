@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api")
 public class EngineDefaultController {
+
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
@@ -38,7 +39,7 @@ public class EngineDefaultController {
     @GetMapping(value = "/version")
     public Object checkVersion() {
 
-        return "phase1_1.0.0";
+        return "phase2_1.0.1";
     }
 
 }

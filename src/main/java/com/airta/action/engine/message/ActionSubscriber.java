@@ -1,8 +1,8 @@
-package com.airta.action.engine.message.report;
+package com.airta.action.engine.message;
 
 import com.airta.action.engine.entity.report.Element;
 import com.airta.action.engine.parser.JsonParser;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.airta.action.engine.service.ITopicRouter;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,36 +17,37 @@ import java.util.List;
  * @author allenyin
  */
 @Service
-public class ReportSubscriber {
+public class ActionSubscriber {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private JsonParser jsonParser;
 
-    @KafkaListener(topics = {"report"})
-    public void listen(ConsumerRecord<?, ?> record) {
-        logger.info("listen report topic: " + record.key());
-        logger.info("listen report topic value: " + record.value().toString());
+    @Autowired
+    private MessageActionFactory messageActionFactory;
 
-        if (record.value() != null) {
-            Object rootElementObject = jsonParser.resolveIncomingMessage(record.value().toString(), Element.class);
-            if (rootElementObject != null) {
-                Element rootElement = (Element) rootElementObject;
-                logger.info("## now we resolved report element: {}", rootElement);
-                jsonParser.updateExistingElementWithNewMessage(rootElement);
-            }
-        }
+    @KafkaListener(topics = {"report", "pool", "flow"})
+    public void listen(ConsumerRecord<?, ?> record) {
+        String incomingTopicName = record.topic();
+        Object incomingKeyObj = record.key();
+        Object incomingValueObj = record.value();
+
+        logger.info("Received topic: {}, key: {} ", incomingTopicName, incomingKeyObj);
+        logger.info("topic value: {} ", incomingValueObj);
+
+        ITopicRouter topicRouter = messageActionFactory.builder(incomingTopicName);
+        topicRouter.actionOnTopic(incomingKeyObj, incomingValueObj);
     }
 
     public static void main(String[] args) {
 
-        ReportSubscriber reportSubscriber = new ReportSubscriber();
+        ActionSubscriber actionSubscriber = new ActionSubscriber();
 //        List<Element> elementList = reportSubscriber.initMap();
 //        reportSubscriber.writeToFile(elementList);
 
-        Element incomingElement = reportSubscriber.updateMap();
-        reportSubscriber.updateExs(incomingElement);
+        Element incomingElement = actionSubscriber.updateMap();
+        actionSubscriber.updateExs(incomingElement);
     }
 
     private void updateExs(Element incomingElement) {
