@@ -59,10 +59,12 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
 
         CoreV1Api api = new CoreV1Api();
 
+        String agentPodName = AGENTPODPrefix + System.currentTimeMillis();
+
         V1Pod pod =
                 new V1PodBuilder()
                         .withNewMetadata()
-                        .withName(AGENTPODPrefix + System.currentTimeMillis())
+                        .withName(agentPodName)
                         .endMetadata()
                         .withNewSpec()
                         .addNewContainer()
@@ -80,6 +82,34 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
 
         logger.info("POD {} created.", pod.getMetadata().getName());
 
+        V1Service svc =
+                new V1ServiceBuilder()
+                        .withNewMetadata()
+                        .withName(agentPodName)
+                        .endMetadata()
+                        .withNewSpec()
+                        .withSessionAffinity("ClientIP")
+                        .withType("NodePort")
+                        .addNewPort()
+                        .withProtocol("TCP")
+                        .withName("http")
+                        .withPort(8228)
+                        .withTargetPort(new IntOrString(8228))
+                        .endPort()
+                        .addNewPort()
+                        .withProtocol("TCP")
+                        .withName("vnc")
+                        .withPort(5900)
+                        .withTargetPort(new IntOrString(5900))
+                        .endPort()
+                        .endSpec()
+                        .build();
+
+        try {
+            api.createNamespacedService(NAMESPACE, svc, null, null, null);
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
 //        V1PodStatus podStatus = pod.getStatus();
 //        logger.info(podStatus.toString());
 
