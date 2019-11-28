@@ -4,46 +4,36 @@ import com.airta.action.engine.k8s.process.IDestroy;
 import com.airta.action.engine.k8s.process.IExec;
 import com.airta.action.engine.k8s.process.IInit;
 import com.airta.action.engine.k8s.process.IWait;
+import com.google.common.io.ByteStreams;
+import io.kubernetes.client.ApiClient;
+import io.kubernetes.client.ApiException;
+import io.kubernetes.client.Configuration;
+import io.kubernetes.client.Exec;
+import io.kubernetes.client.apis.CoreV1Api;
+import io.kubernetes.client.custom.IntOrString;
+import io.kubernetes.client.models.*;
+import io.kubernetes.client.util.Config;
+import io.kubernetes.client.util.Yaml;
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import io.kubernetes.client.ApiClient;
-import io.kubernetes.client.ApiException;
-import io.kubernetes.client.Configuration;
-import io.kubernetes.client.apis.CoreV1Api;
-import io.kubernetes.client.models.V1Container;
-import io.kubernetes.client.models.V1ObjectMeta;
-import io.kubernetes.client.models.V1Pod;
-import io.kubernetes.client.models.V1PodBuilder;
-import io.kubernetes.client.models.V1PodList;
-import io.kubernetes.client.models.V1PodSpec;
-import io.kubernetes.client.util.Config;
-
-import io.kubernetes.client.custom.IntOrString;
-import io.kubernetes.client.models.V1DeleteOptions;
-import io.kubernetes.client.models.V1Service;
-import io.kubernetes.client.models.V1ServiceBuilder;
-import io.kubernetes.client.models.V1Status;
-import io.kubernetes.client.util.Yaml;
-
-import com.google.common.io.ByteStreams;
-import io.kubernetes.client.Exec;
-
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-
-import java.io.File;
 import java.util.HashMap;
-
-import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final String NAMESPACE = "airgent";
+    private final String AGENTIMAGE = "airta/airgent:1.0-2019101709.1571304193";
+    private final String AGENTPODPrefix = "agent-pod-";
+    private final String AGENTContainerName = "agent";
+
 
     public boolean scheduleInitAgent() {
 
@@ -53,8 +43,6 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
         return true;
     }
 
-    ;
-
     @Override
     public boolean createPod() {
 
@@ -63,6 +51,7 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
         ApiClient client = null;
         try {
             client = Config.defaultClient();
+            client.setVerifyingSsl(false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -73,44 +62,35 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
         V1Pod pod =
                 new V1PodBuilder()
                         .withNewMetadata()
-                        .withName("apod")
+                        .withName(AGENTPODPrefix + System.currentTimeMillis())
                         .endMetadata()
                         .withNewSpec()
                         .addNewContainer()
-                        .withName("www")
-                        .withImage("nginx")
+                        .withName(AGENTContainerName)
+                        .withImage(AGENTIMAGE)
                         .endContainer()
                         .endSpec()
                         .build();
 
         try {
-            api.createNamespacedPod("default", pod, null, null, null);
+            api.createNamespacedPod(NAMESPACE, pod, null, null, null);
         } catch (ApiException e) {
             e.printStackTrace();
         }
 
-        V1Pod pod2 =
-                new V1Pod()
-                        .metadata(new V1ObjectMeta().name("anotherpod"))
-                        .spec(
-                                new V1PodSpec()
-                                        .containers(Arrays.asList(new V1Container().name("www").image("nginx"))));
+        logger.info("POD {} created.", pod.getMetadata().getName());
 
-        try {
-            api.createNamespacedPod("default", pod2, null, null, null);
-        } catch (ApiException e) {
-            e.printStackTrace();
-        }
+//        V1PodStatus podStatus = pod.getStatus();
+//        logger.info(podStatus.toString());
 
-        V1PodList list =
-                null;
+        V1PodList list = null;
         try {
-            list = api.listNamespacedPod("default", null, null, null, null, null, null, null, null);
+            list = api.listNamespacedPod(NAMESPACE, null, null, null, null, null, null, null, null);
         } catch (ApiException e) {
             e.printStackTrace();
         }
         for (V1Pod item : list.getItems()) {
-            System.out.println(item.getMetadata().getName());
+            logger.info(item.getMetadata().getName());
         }
 
         return false;
@@ -248,7 +228,7 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
                 namespace,
                 podName,
                 commandsList.isEmpty()
-                        ? new String[] {"sh"}
+                        ? new String[]{"sh"}
                         : commandsList.toArray(new String[commandsList.size()]),
                 true,
                 tty);

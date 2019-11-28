@@ -1,6 +1,7 @@
 package com.airta.action.engine.controller;
 
 
+import com.airta.action.engine.service.topic.PoolTopicRouter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public class EngineDefaultController {
     @Autowired
     private KafkaTemplate kafkaTemplate;
 
+    @Autowired
+    private PoolTopicRouter poolTopicRouter;
+
     @GetMapping(value = "/alive")
     public HttpStatus checkMessageStatus() {
         try {
@@ -36,6 +40,17 @@ public class EngineDefaultController {
             logger.error("sending to kafka fail", e);
         }
         return HttpStatus.BAD_REQUEST;
+    }
+
+    @PostMapping(value = "/init", produces = "application/json")
+    @ResponseBody
+    public Object initAgent() {
+
+        logger.info("init request received.");
+
+        poolTopicRouter.actionOnTopic("","");
+
+        return 200;
     }
 
     @GetMapping(value = "/version")
