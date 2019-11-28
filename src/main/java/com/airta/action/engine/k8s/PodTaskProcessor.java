@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
@@ -61,10 +62,14 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
 
         String agentPodName = AGENTPODPrefix + System.currentTimeMillis();
 
+        Map<String, String> podLabelMap = new HashMap<>();
+        podLabelMap.put("app", agentPodName);
+
         V1Pod pod =
                 new V1PodBuilder()
                         .withNewMetadata()
                         .withName(agentPodName)
+                        .withLabels(podLabelMap)
                         .endMetadata()
                         .withNewSpec()
                         .addNewContainer()
@@ -81,6 +86,8 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
         }
 
         logger.info("POD {} created.", pod.getMetadata().getName());
+        Map<String, String> svcSelectorMap = new HashMap<>();
+        svcSelectorMap.put("app", agentPodName);
 
         V1Service svc =
                 new V1ServiceBuilder()
@@ -102,6 +109,7 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
                         .withPort(5900)
                         .withTargetPort(new IntOrString(5900))
                         .endPort()
+                        .addToSelector(svcSelectorMap)
                         .endSpec()
                         .build();
 
@@ -129,6 +137,7 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
     @Override
     public boolean createService() {
 
+
         V1Pod pod =
                 new V1PodBuilder()
                         .withNewMetadata()
@@ -145,6 +154,7 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
                         .endSpec()
                         .build();
         System.out.println(Yaml.dump(pod));
+
 
         V1Service svc =
                 new V1ServiceBuilder()
@@ -266,6 +276,7 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
         Thread in =
                 new Thread(
                         new Runnable() {
+                            @Override
                             public void run() {
                                 try {
                                     ByteStreams.copy(System.in, proc.getOutputStream());
@@ -279,6 +290,7 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
         Thread out =
                 new Thread(
                         new Runnable() {
+                            @Override
                             public void run() {
                                 try {
                                     ByteStreams.copy(proc.getInputStream(), System.out);
