@@ -31,7 +31,7 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final String NAMESPACE = "airgent";
-    private final String AGENTIMAGE = "airta/airgent:1.0-2019101709.1571304193";
+    private final String AGENTIMAGE = "airta/airgent:latest";
     private final String AGENTPODPrefix = "agent-pod-";
     private final String AGENTContainerName = "agent";
 
