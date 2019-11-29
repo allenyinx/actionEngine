@@ -28,7 +28,7 @@ public class PoolTopicRouter implements ITopicRouter {
                 logger.info("## now we resolved agentPool: {}", agentPool);
                 agentPool.setPoolName(incomingKeyObj.toString());
 
-                if(agentPool.getType().equals("init")) {
+                if("init".equals(agentPool.getType())) {
                     return podTaskProcessor.scheduleInitAgent(agentPool);
                 } else {
                     return podTaskProcessor.scheduleCleanAgents(agentPool);

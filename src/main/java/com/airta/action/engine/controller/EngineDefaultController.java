@@ -1,6 +1,7 @@
 package com.airta.action.engine.controller;
 
 
+import com.airta.action.engine.entity.pool.AgentPool;
 import com.airta.action.engine.parser.JsonParser;
 import com.airta.action.engine.service.topic.PoolTopicRouter;
 import org.slf4j.Logger;
@@ -48,11 +49,11 @@ public class EngineDefaultController {
 
     @PostMapping(value = "/init", produces = "application/json")
     @ResponseBody
-    public Object initAgent() {
+    public Object initAgent(Object agentPoolMessage) {
 
         logger.info("init request received.");
 
-        poolTopicRouter.actionOnTopic("", "");
+        poolTopicRouter.actionOnTopic("general", agentPoolMessage);
 
         return 200;
     }

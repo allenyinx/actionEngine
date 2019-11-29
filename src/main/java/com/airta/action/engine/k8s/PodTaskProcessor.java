@@ -14,14 +14,12 @@ import io.kubernetes.client.apis.CoreV1Api;
 import io.kubernetes.client.custom.IntOrString;
 import io.kubernetes.client.models.*;
 import io.kubernetes.client.util.Config;
-import io.kubernetes.client.util.Yaml;
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,26 +62,53 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
 
         logger.info("## scheduling {} pod for pool: {}", agentPool.getAgentSize(), agentPool.getPoolName());
 
-        for(int index=0;index<agentPool.getAgentSize();index++) {
+        for (int index = 0; index < agentPool.getAgentSize(); index++) {
 
-            createPod(agentPool.getPoolName(), agentPool.getPoolGroup(), index);
+            String poolName = agentPool.getPoolName();
+            int groupId = agentPool.getPoolGroup();
+            String agentPodName = AGENTPODPrefix + poolName + "-" + groupId + "-" + index;
+
+            V1Pod agentPod = createPod(agentPodName, agentPool.getPoolName(), agentPool.getPoolGroup());
+            V1Service agentService = createService(agentPodName, agentPool.getPoolName(), agentPool.getPoolGroup());
+
             waitForPodReady();
+            registerAgentSession(agentPod, agentService, agentPool);
         }
 
         return true;
     }
 
     public boolean scheduleCleanAgents(AgentPool agentPool) {
-        logger.info("## cleaning specified agent pool ..");
+        logger.info("## cleaning specified agent pool {} ..", agentPool.getPoolName());
+
+        String poolName = agentPool.getPoolName();
+        int groupId = agentPool.getPoolGroup();
+
+        deletePods(poolName, groupId);
+        deleteServices(poolName, groupId);
 
         return true;
     }
 
-    private V1Pod createPod(String poolName, int groupId, int podIndex) {
+    private void registerAgentSession(V1Pod agentPod, V1Service agentService, AgentPool agentPool) {
 
-        String agentPodName = AGENTPODPrefix+poolName+"-"+groupId+"-"+podIndex;
+        logger.info("## register agent {} to pool {} .", agentPod.getMetadata().getName(), agentPool.getPoolName());
+
+    }
+
+    private void unRegisterAgentSession(V1Pod agentPod, V1Service agentService, AgentPool agentPool) {
+
+        logger.info("## unRegister agent {} from pool {} .", agentPod.getMetadata().getName(), agentPool.getPoolName());
+
+    }
+
+    private V1Pod createPod(String agentPodName, String poolName, int groupId) {
+
+
         Map<String, String> podLabelMap = new HashMap<>();
         podLabelMap.put("app", agentPodName);
+        podLabelMap.put("pool", poolName);
+        podLabelMap.put("group", String.valueOf(groupId));
 
         V1Pod pod =
                 new V1PodBuilder()
@@ -105,54 +130,29 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
             e.printStackTrace();
         }
 
-        logger.info("POD {} created.", pod.getMetadata().getName());
+        logger.info("## POD {} created.", pod.getMetadata().getName());
         return pod;
     }
 
     @Override
-    public boolean createPod() {
+    public V1Service createService() {
+        return null;
+    }
 
-        logger.info("## Creating pod with init process ..");
+    private V1Service createService(String agentPodName, String poolName, int groupId) {
 
-        String agentPodName = AGENTPODPrefix + System.currentTimeMillis();
-
-        Map<String, String> podLabelMap = new HashMap<>();
-        podLabelMap.put("app", agentPodName);
-
-        V1PersistentVolumeClaim shareVol = new V1PersistentVolumeClaimBuilder().build();
-        V1PersistentVolumeClaimSpec v1PersistentVolumeClaimSpec = new V1PersistentVolumeClaimSpec();
-        v1PersistentVolumeClaimSpec.setVolumeName("sharedata");
-        shareVol.setSpec(v1PersistentVolumeClaimSpec);
-
-        V1Pod pod =
-                new V1PodBuilder()
-                        .withNewMetadata()
-                        .withName(agentPodName)
-                        .withLabels(podLabelMap)
-                        .endMetadata()
-                        .withNewSpec()
-//                        .withVolumes(V1Volume)
-                        .addNewContainer()
-                        .withName(AGENTContainerName)
-                        .withImage(AGENTIMAGE)
-                        .endContainer()
-                        .endSpec()
-                        .build();
-
-        try {
-            coreV1Api.createNamespacedPod(NAMESPACE, pod, null, null, null);
-        } catch (ApiException e) {
-            e.printStackTrace();
-        }
-
-        logger.info("POD {} created.", pod.getMetadata().getName());
         Map<String, String> svcSelectorMap = new HashMap<>();
         svcSelectorMap.put("app", agentPodName);
+
+        Map<String, String> serviceLabelMap = new HashMap<>();
+        serviceLabelMap.put("pool", poolName);
+        serviceLabelMap.put("group", String.valueOf(groupId));
 
         V1Service svc =
                 new V1ServiceBuilder()
                         .withNewMetadata()
                         .withName(agentPodName)
+                        .withLabels(serviceLabelMap)
                         .endMetadata()
                         .withNewSpec()
                         .withSessionAffinity("ClientIP")
@@ -178,8 +178,67 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
         } catch (ApiException e) {
             e.printStackTrace();
         }
-//        V1PodStatus podStatus = pod.getStatus();
-//        logger.info(podStatus.toString());
+
+        logger.info("## service for {} created ..", agentPodName);
+
+        return svc;
+    }
+
+    private void deletePods(String poolName, int groupId) {
+
+        V1PodList podList = getPodList();
+
+        for (V1Pod item : podList.getItems()) {
+            logger.info(item.getMetadata().getName());
+
+            Map<String, String> labelMap = item.getMetadata().getLabels();
+            if (labelMap.containsKey("pool") && labelMap.containsKey("group")) {
+                String meta_poolName = labelMap.get("pool");
+                String meta_groupId = labelMap.get("group");
+                if (poolName.equals(meta_poolName) && String.valueOf(groupId).equals(meta_groupId)) {
+
+                    try {
+                        coreV1Api.deleteNamespacedPod(item.getMetadata().getName(), NAMESPACE,
+                                null, null, null, null, null, null);
+                    } catch (ApiException e) {
+                        e.printStackTrace();
+                    }
+
+                    logger.info("## pod {} deleted ..", item.getMetadata().getName());
+                }
+
+            }
+        }
+    }
+
+    private void deleteServices(String poolName, int groupId) {
+
+        V1ServiceList serviceList = getServiceList();
+
+        for (V1Service item : serviceList.getItems()) {
+
+            Map<String, String> labelMap = item.getMetadata().getLabels();
+            if (labelMap.containsKey("pool") && labelMap.containsKey("group")) {
+                String meta_poolName = labelMap.get("pool");
+                String meta_groupId = labelMap.get("group");
+                if (poolName.equals(meta_poolName) && String.valueOf(groupId).equals(meta_groupId)) {
+
+                    try {
+                        coreV1Api.deleteNamespacedService(item.getMetadata().getName(), NAMESPACE,
+                                null, null, null, null, null, null);
+                    } catch (ApiException e) {
+                        e.printStackTrace();
+                    }
+
+                    logger.info("## service {} deleted ..", item.getMetadata().getName());
+                }
+
+            }
+        }
+
+    }
+
+    private V1PodList getPodList() {
 
         V1PodList list = null;
         try {
@@ -187,104 +246,25 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
         } catch (ApiException e) {
             e.printStackTrace();
         }
-        for (V1Pod item : list.getItems()) {
-            logger.info(item.getMetadata().getName());
+
+        return list;
+    }
+
+    private V1ServiceList getServiceList() {
+
+        V1ServiceList list = null;
+        try {
+            list = coreV1Api.listNamespacedService(NAMESPACE, null, null, null, null, null, null, null, null);
+        } catch (ApiException e) {
+            e.printStackTrace();
         }
 
-        return false;
+        return list;
     }
 
     @Override
-    public boolean createService() {
+    public boolean createPod() {
 
-
-        V1Pod pod =
-                new V1PodBuilder()
-                        .withNewMetadata()
-                        .withName("apod")
-                        .endMetadata()
-                        .withNewSpec()
-                        .addNewContainer()
-                        .withName("www")
-                        .withImage("nginx")
-                        .withNewResources()
-                        .withLimits(new HashMap<>())
-                        .endResources()
-                        .endContainer()
-                        .endSpec()
-                        .build();
-        System.out.println(Yaml.dump(pod));
-
-
-        V1Service svc =
-                new V1ServiceBuilder()
-                        .withNewMetadata()
-                        .withName("aservice")
-                        .endMetadata()
-                        .withNewSpec()
-                        .withSessionAffinity("ClientIP")
-                        .withType("NodePort")
-                        .addNewPort()
-                        .withProtocol("TCP")
-                        .withName("client")
-                        .withPort(8008)
-                        .withNodePort(8080)
-                        .withTargetPort(new IntOrString(8080))
-                        .endPort()
-                        .endSpec()
-                        .build();
-        System.out.println(Yaml.dump(svc));
-
-        // Read yaml configuration file, and deploy it
-        ApiClient client = null;
-        try {
-            client = Config.defaultClient();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Configuration.setDefaultApiClient(client);
-
-        //  See issue #474. Not needed at most cases, but it is needed if you are using war
-        //  packging or running this on JUnit.
-        Yaml.addModelMap("v1", "Service", V1Service.class);
-
-        // Example yaml file can be found in $REPO_DIR/test-svc.yaml
-        File file = new File("test-svc.yaml");
-        V1Service yamlSvc = null;
-        try {
-            yamlSvc = (V1Service) Yaml.load(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // Deployment and StatefulSet is defined in apps/v1, so you should use AppsV1Api instead of
-        // CoreV1API
-        CoreV1Api api = new CoreV1Api();
-        V1Service createResult = null;
-        try {
-            createResult = api.createNamespacedService("default", yamlSvc, null, null, null);
-        } catch (ApiException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println(createResult);
-
-        V1Status deleteResult =
-                null;
-        try {
-            deleteResult = api.deleteNamespacedService(
-                    yamlSvc.getMetadata().getName(),
-                    "default",
-                    null,
-                    new V1DeleteOptions(),
-                    null,
-                    null,
-                    null,
-                    null);
-        } catch (ApiException e) {
-            e.printStackTrace();
-        }
-        System.out.println(deleteResult);
         return false;
     }
 
