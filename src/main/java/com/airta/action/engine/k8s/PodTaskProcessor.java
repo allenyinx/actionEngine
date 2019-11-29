@@ -191,7 +191,7 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
 
         for (V1Pod item : podList.getItems()) {
             String tmpPodName = item.getMetadata().getName();
-            logger.info("## current checking pod: {}",tmpPodName);
+            logger.info("## current checking pod: {}", tmpPodName);
 
             Map<String, String> labelMap = item.getMetadata().getLabels();
             if (labelMap.containsKey("pool") && labelMap.containsKey("group")) {
@@ -200,8 +200,10 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
                 if (poolName.equals(meta_poolName) && String.valueOf(groupId).equals(meta_groupId)) {
 
                     try {
-                        coreV1Api.deleteNamespacedPod(tmpPodName, NAMESPACE,
-                                null, null, null, null, null, null);
+                        coreV1Api.deleteNamespacedPodAsync(tmpPodName, NAMESPACE,
+                                null, null, null, 0, null, null, null);
+//                        coreV1Api.deleteNamespacedPod(tmpPodName, NAMESPACE,
+//                                null, null, null, null, null, null);
                     } catch (ApiException e) {
                         e.printStackTrace();
                     }
@@ -220,7 +222,7 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
         for (V1Service item : serviceList.getItems()) {
 
             String tmpServiceName = item.getMetadata().getName();
-            logger.info("## current checking service: {}",tmpServiceName);
+            logger.info("## current checking service: {}", tmpServiceName);
 
             Map<String, String> labelMap = item.getMetadata().getLabels();
             if (labelMap.containsKey("pool") && labelMap.containsKey("group")) {
