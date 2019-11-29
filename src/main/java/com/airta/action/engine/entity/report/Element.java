@@ -21,7 +21,7 @@ public class Element implements Serializable {
     private boolean isWorkingOn = false;
     private String url;
 
-    private int id = 0;
+    private String id;
     private String text;
 
     public String toString() {
@@ -121,19 +121,19 @@ public class Element implements Serializable {
         this.type = type;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public String getText() {
         return elementId;
     }
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

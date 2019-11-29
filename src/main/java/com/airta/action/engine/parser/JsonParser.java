@@ -45,7 +45,7 @@ public class JsonParser {
 
     public Object resolveIncomingMessage(String value, Class objectClass) {
 
-        logger.info("message {} resolved. ", value);
+        logger.info("message resolving ... ");
 //        try {
 //            logger.info(OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(value));
 //        } catch (JsonProcessingException e) {
@@ -58,7 +58,7 @@ public class JsonParser {
          * may incoming JSON message
          */
         if (isJSONValid(value)) {
-            logger.info("## valid json input, convert to jenkinsObject");
+            logger.info("## valid json input, convert to Element");
 
             if (value.contains("\\")) {
                 logger.info("## payload contains escape chars: {}", value);
