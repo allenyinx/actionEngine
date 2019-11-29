@@ -79,7 +79,7 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
     }
 
     public boolean scheduleCleanAgents(AgentPool agentPool) {
-        logger.info("## cleaning specified agent pool {} ..", agentPool.getPoolName());
+        logger.info("## cleaning specified agent pool: {} ..", agentPool.getPoolName());
 
         String poolName = agentPool.getPoolName();
         int groupId = agentPool.getPoolGroup();
@@ -186,10 +186,12 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
 
     private void deletePods(String poolName, int groupId) {
 
+        logger.info("## clean pods for pool: {}", poolName);
         V1PodList podList = getPodList();
 
         for (V1Pod item : podList.getItems()) {
-            logger.info(item.getMetadata().getName());
+            String tmpPodName = item.getMetadata().getName();
+            logger.info("## current checking pod: {}",tmpPodName);
 
             Map<String, String> labelMap = item.getMetadata().getLabels();
             if (labelMap.containsKey("pool") && labelMap.containsKey("group")) {
@@ -198,13 +200,13 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
                 if (poolName.equals(meta_poolName) && String.valueOf(groupId).equals(meta_groupId)) {
 
                     try {
-                        coreV1Api.deleteNamespacedPod(item.getMetadata().getName(), NAMESPACE,
+                        coreV1Api.deleteNamespacedPod(tmpPodName, NAMESPACE,
                                 null, null, null, null, null, null);
                     } catch (ApiException e) {
                         e.printStackTrace();
                     }
 
-                    logger.info("## pod {} deleted ..", item.getMetadata().getName());
+                    logger.info("## pod {} deleted ..", tmpPodName);
                 }
 
             }
@@ -217,6 +219,9 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
 
         for (V1Service item : serviceList.getItems()) {
 
+            String tmpServiceName = item.getMetadata().getName();
+            logger.info("## current checking service: {}",tmpServiceName);
+
             Map<String, String> labelMap = item.getMetadata().getLabels();
             if (labelMap.containsKey("pool") && labelMap.containsKey("group")) {
                 String meta_poolName = labelMap.get("pool");
@@ -224,13 +229,13 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
                 if (poolName.equals(meta_poolName) && String.valueOf(groupId).equals(meta_groupId)) {
 
                     try {
-                        coreV1Api.deleteNamespacedService(item.getMetadata().getName(), NAMESPACE,
+                        coreV1Api.deleteNamespacedService(tmpServiceName, NAMESPACE,
                                 null, null, null, null, null, null);
                     } catch (ApiException e) {
                         e.printStackTrace();
                     }
 
-                    logger.info("## service {} deleted ..", item.getMetadata().getName());
+                    logger.info("## service {} deleted ..", tmpServiceName);
                 }
 
             }
