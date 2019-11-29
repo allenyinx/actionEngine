@@ -1,5 +1,6 @@
 package com.airta.action.engine.k8s;
 
+import com.airta.action.engine.entity.pool.AgentPool;
 import com.airta.action.engine.k8s.process.IDestroy;
 import com.airta.action.engine.k8s.process.IExec;
 import com.airta.action.engine.k8s.process.IInit;
@@ -17,6 +18,7 @@ import io.kubernetes.client.util.Yaml;
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -32,24 +34,21 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final String NAMESPACE = "airgent";
     private final String AGENTIMAGE = "airta/airgent:latest";
-    private final String AGENTPODPrefix = "agent-pod-";
+    private final String AGENTPODPrefix = "agent-";
     private final String AGENTContainerName = "agent";
+    private final String ShareVolumeName = "sharedata";
 
+    private ApiClient client = null;
+    private CoreV1Api coreV1Api = null;
 
-    public boolean scheduleInitAgent() {
+    @Autowired
+    public PodTaskProcessor() {
 
-        createPod();
-        waitForPodReady();
-
-        return true;
+        initClient();
     }
 
-    @Override
-    public boolean createPod() {
+    private void initClient() {
 
-        logger.info("## Creating pod with init process ..");
-
-        ApiClient client = null;
         try {
             client = Config.defaultClient();
             client.setVerifyingSsl(false);
@@ -58,7 +57,62 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
         }
         Configuration.setDefaultApiClient(client);
 
-        CoreV1Api api = new CoreV1Api();
+        coreV1Api = new CoreV1Api();
+    }
+
+    public boolean scheduleInitAgent(AgentPool agentPool) {
+
+        logger.info("## scheduling {} pod for pool: {}", agentPool.getAgentSize(), agentPool.getPoolName());
+
+        for(int index=0;index<agentPool.getAgentSize();index++) {
+
+            createPod(agentPool.getPoolName(), agentPool.getPoolGroup(), index);
+            waitForPodReady();
+        }
+
+        return true;
+    }
+
+    public boolean scheduleCleanAgents(AgentPool agentPool) {
+        logger.info("## cleaning specified agent pool ..");
+
+        return true;
+    }
+
+    private V1Pod createPod(String poolName, int groupId, int podIndex) {
+
+        String agentPodName = AGENTPODPrefix+poolName+"-"+groupId+"-"+podIndex;
+        Map<String, String> podLabelMap = new HashMap<>();
+        podLabelMap.put("app", agentPodName);
+
+        V1Pod pod =
+                new V1PodBuilder()
+                        .withNewMetadata()
+                        .withName(agentPodName)
+                        .withLabels(podLabelMap)
+                        .endMetadata()
+                        .withNewSpec()
+                        .addNewContainer()
+                        .withName(AGENTContainerName)
+                        .withImage(AGENTIMAGE)
+                        .endContainer()
+                        .endSpec()
+                        .build();
+
+        try {
+            coreV1Api.createNamespacedPod(NAMESPACE, pod, null, null, null);
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
+
+        logger.info("POD {} created.", pod.getMetadata().getName());
+        return pod;
+    }
+
+    @Override
+    public boolean createPod() {
+
+        logger.info("## Creating pod with init process ..");
 
         String agentPodName = AGENTPODPrefix + System.currentTimeMillis();
 
@@ -86,7 +140,7 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
                         .build();
 
         try {
-            api.createNamespacedPod(NAMESPACE, pod, null, null, null);
+            coreV1Api.createNamespacedPod(NAMESPACE, pod, null, null, null);
         } catch (ApiException e) {
             e.printStackTrace();
         }
@@ -120,7 +174,7 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
                         .build();
 
         try {
-            api.createNamespacedService(NAMESPACE, svc, null, null, null);
+            coreV1Api.createNamespacedService(NAMESPACE, svc, null, null, null);
         } catch (ApiException e) {
             e.printStackTrace();
         }
@@ -129,7 +183,7 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
 
         V1PodList list = null;
         try {
-            list = api.listNamespacedPod(NAMESPACE, null, null, null, null, null, null, null, null);
+            list = coreV1Api.listNamespacedPod(NAMESPACE, null, null, null, null, null, null, null, null);
         } catch (ApiException e) {
             e.printStackTrace();
         }

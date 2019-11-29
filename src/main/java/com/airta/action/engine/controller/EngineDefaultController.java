@@ -63,6 +63,12 @@ public class EngineDefaultController {
         return jsonParser.readFronJSONFile();
     }
 
+    @GetMapping(value = "/pool", produces = "application/json")
+    public org.json.simple.JSONArray getAgentPool() {
+
+        return jsonParser.readFronJSONFile();
+    }
+
     @GetMapping(value = "/version")
     public Object checkVersion() {
 
