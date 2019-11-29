@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.boot.configurationprocessor.json.JSONException;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.io.FileReader;
-import java.util.Iterator;
 
 import org.json.simple.parser.JSONParser;
 
@@ -35,7 +33,7 @@ public class JsonParser {
     @Value("${engine.share}")
     private String TreeJsonPath;
 
-    public JSONObject readFronJSONFile() {
+    public org.json.simple.JSONArray readFronJSONFile() {
 
         JSONParser parser = new JSONParser();
         try {
@@ -43,7 +41,7 @@ public class JsonParser {
             Object obj = parser.parse(new FileReader(
                     TreeJsonPath));
 
-            return (JSONObject) obj;
+            return (org.json.simple.JSONArray) obj;
         } catch (Exception e) {
             e.printStackTrace();
         }
