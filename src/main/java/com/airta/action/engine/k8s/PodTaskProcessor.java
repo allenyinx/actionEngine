@@ -225,7 +225,7 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
             logger.info("## current checking service: {}", tmpServiceName);
 
             Map<String, String> labelMap = item.getMetadata().getLabels();
-            if (labelMap.containsKey("pool") && labelMap.containsKey("group")) {
+            if (labelMap!=null && labelMap.containsKey("pool") && labelMap.containsKey("group")) {
                 String meta_poolName = labelMap.get("pool");
                 String meta_groupId = labelMap.get("group");
                 if (poolName.equals(meta_poolName) && String.valueOf(groupId).equals(meta_groupId)) {
