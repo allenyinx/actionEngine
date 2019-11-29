@@ -14,7 +14,7 @@ public class ReportTopicRouter implements ITopicRouter {
 
     @Override
     public boolean actionOnTopic(Object incomingKeyObj, Object incomingValueObj) {
-        logger.info("on report topic processing ..");
+        logger.info("## on report topic processing ..");
 
         if (incomingValueObj != null) {
             Object rootElementObject = jsonParser.resolveIncomingMessage(incomingValueObj.toString(), Element.class);

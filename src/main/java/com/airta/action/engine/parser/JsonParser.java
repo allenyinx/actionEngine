@@ -46,13 +46,13 @@ public class JsonParser {
     public Object resolveIncomingMessage(String value, Class objectClass) {
 
         logger.info("message {} resolved. ", value);
-        try {
-            logger.info(OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(value));
-        } catch (JsonProcessingException e) {
-            logger.error(e.getMessage());
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
+//        try {
+//            logger.info(OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(value));
+//        } catch (JsonProcessingException e) {
+//            logger.error(e.getMessage());
+//        } catch (IOException e) {
+//            logger.error(e.getMessage());
+//        }
 
         /**
          * may incoming JSON message

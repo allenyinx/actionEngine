@@ -65,6 +65,11 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
         Map<String, String> podLabelMap = new HashMap<>();
         podLabelMap.put("app", agentPodName);
 
+        V1PersistentVolumeClaim shareVol = new V1PersistentVolumeClaimBuilder().build();
+        V1PersistentVolumeClaimSpec v1PersistentVolumeClaimSpec = new V1PersistentVolumeClaimSpec();
+        v1PersistentVolumeClaimSpec.setVolumeName("sharedata");
+        shareVol.setSpec(v1PersistentVolumeClaimSpec);
+
         V1Pod pod =
                 new V1PodBuilder()
                         .withNewMetadata()
@@ -72,6 +77,7 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
                         .withLabels(podLabelMap)
                         .endMetadata()
                         .withNewSpec()
+//                        .withVolumes(V1Volume)
                         .addNewContainer()
                         .withName(AGENTContainerName)
                         .withImage(AGENTIMAGE)
