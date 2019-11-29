@@ -1,14 +1,16 @@
 package com.airta.action.engine.controller;
 
 
+import com.airta.action.engine.parser.JsonParser;
 import com.airta.action.engine.service.topic.PoolTopicRouter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
-import javax.servlet.http.HttpServletRequest;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -27,6 +29,9 @@ public class EngineDefaultController {
 
     @Autowired
     private PoolTopicRouter poolTopicRouter;
+
+    @Autowired
+    private JsonParser jsonParser;
 
     @GetMapping(value = "/alive")
     public HttpStatus checkMessageStatus() {
@@ -48,16 +53,22 @@ public class EngineDefaultController {
 
         logger.info("init request received.");
 
-        poolTopicRouter.actionOnTopic("","");
+        poolTopicRouter.actionOnTopic("", "");
 
         return 200;
+    }
+
+    @GetMapping(value = "/sitemap", produces = "application/json")
+    public JSONObject getSiteMapJSON() {
+
+        return jsonParser.readFronJSONFile();
     }
 
     @GetMapping(value = "/version")
     public Object checkVersion() {
 
-        String currentTimestamp = new SimpleDateFormat("yyyyMMddHHmm").format( new Date() );
-        return "phase2_1."+currentTimestamp;
+        String currentTimestamp = new SimpleDateFormat("yyyyMMddHHmm").format(new Date());
+        return "phase2_1." + currentTimestamp;
     }
 
 }

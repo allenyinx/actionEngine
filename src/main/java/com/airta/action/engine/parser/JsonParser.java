@@ -15,6 +15,11 @@ import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.io.FileReader;
+import java.util.Iterator;
+
+import org.json.simple.parser.JSONParser;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,6 +34,21 @@ public class JsonParser {
 
     @Value("${engine.share}")
     private String TreeJsonPath;
+
+    public JSONObject readFronJSONFile() {
+
+        JSONParser parser = new JSONParser();
+        try {
+
+            Object obj = parser.parse(new FileReader(
+                    TreeJsonPath));
+
+            return (JSONObject) obj;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public String objectToJSONString(Object jsonObject) {
 
@@ -46,13 +66,6 @@ public class JsonParser {
     public Object resolveIncomingMessage(String value, Class objectClass) {
 
         logger.info("message resolving ... ");
-//        try {
-//            logger.info(OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(value));
-//        } catch (JsonProcessingException e) {
-//            logger.error(e.getMessage());
-//        } catch (IOException e) {
-//            logger.error(e.getMessage());
-//        }
 
         /**
          * may incoming JSON message

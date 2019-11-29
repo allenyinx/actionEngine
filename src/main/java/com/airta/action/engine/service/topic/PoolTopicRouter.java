@@ -10,9 +10,6 @@ import org.springframework.stereotype.Component;
 public class PoolTopicRouter implements ITopicRouter {
 
     @Autowired
-    private JsonParser jsonParser;
-
-    @Autowired
     private PodTaskProcessor podTaskProcessor;
 
     @Override
