@@ -46,7 +46,7 @@ public class RedisClient {
         config.setMaxIdle(5);
         config.setTestOnBorrow(false);
 
-        jedisPool = new JedisPool(config, "127.0.0.1", 6379);
+        jedisPool = new JedisPool(config, "airredis-master.database", 6379);
     }
 
     public void storeObject(String key, PodSessionPool obj) {
