@@ -1,10 +1,13 @@
 package com.airta.action.engine.k8s;
 
 import com.airta.action.engine.entity.pool.AgentPool;
+import com.airta.action.engine.entity.pool.PodSession;
+import com.airta.action.engine.entity.pool.PodSessionPool;
 import com.airta.action.engine.k8s.process.IDestroy;
 import com.airta.action.engine.k8s.process.IExec;
 import com.airta.action.engine.k8s.process.IInit;
 import com.airta.action.engine.k8s.process.IWait;
+import com.airta.action.engine.util.RedisClient;
 import com.google.common.io.ByteStreams;
 import io.kubernetes.client.ApiClient;
 import io.kubernetes.client.ApiException;
@@ -21,15 +24,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+/**
+ * @author allenyin
+ */
 @Service
 public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private final String NAMESPACE = "airgent";
     private final String AGENTIMAGE = "airta/airgent:latest";
     private final String AGENTPODPrefix = "agent-";
@@ -38,11 +42,13 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
 
     private ApiClient client = null;
     private CoreV1Api coreV1Api = null;
+    private RedisClient redisClient;
 
     @Autowired
     public PodTaskProcessor() {
 
         initClient();
+        redisClient = new RedisClient();
     }
 
     private void initClient() {
@@ -87,6 +93,8 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
         deletePods(poolName, groupId);
         deleteServices(poolName, groupId);
 
+        unRegisterAgentSession(agentPool);
+
         return true;
     }
 
@@ -94,16 +102,42 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
 
         logger.info("## register agent {} to pool {} .", agentPod.getMetadata().getName(), agentPool.getPoolName());
 
+        PodSessionPool podSessionPool = redisClient.readObject(agentPool.getPoolName());
+        List<PodSession> podSessionList = podSessionPool.getPodSessionList();
+        for(PodSession podSession: podSessionList) {
+            if(podSession.getName().equals(agentPod.getMetadata().getName())) {
+                logger.warn("## exist the pod session, skip register ..");
+                return;
+            }
+        }
+        PodSession podSession = new PodSession();
+        podSession.setGroup(agentPool.getPoolName());
+        podSession.setGroup(String.valueOf(agentPool.getPoolGroup()));
+        podSession.setName(agentPod.getMetadata().getName());
+        podSession.setService(agentService.getMetadata().getName());
+        podSession.setPort("8201");
+
+        podSessionList.add(podSession);
+        logger.info("## PodSession {} added into session List pool {}", podSession.getName(), agentPool.getPoolName());
+        podSessionPool.setPodSessionList(podSessionList);
+        redisClient.storeObject(agentPool.getPoolName(), podSessionPool);
     }
 
-    private void unRegisterAgentSession(V1Pod agentPod, V1Service agentService, AgentPool agentPool) {
+    private void unRegisterAgentSession(AgentPool agentPool) {
 
-        logger.info("## unRegister agent {} from pool {} .", agentPod.getMetadata().getName(), agentPool.getPoolName());
+        logger.info("## unRegister  pool {} .",agentPool.getPoolName());
 
+        PodSessionPool podSessionPool = redisClient.readObject(agentPool.getPoolName());
+        podSessionPool.setPodSessionList(Collections.emptyList());
+        redisClient.storeObject(agentPool.getPoolName(), podSessionPool);
+    }
+
+    public PodSessionPool readPodSessionPool(String poolName) {
+
+        return redisClient.readObject(poolName);
     }
 
     private V1Pod createPod(String agentPodName, String poolName, int groupId) {
-
 
         Map<String, String> podLabelMap = new HashMap<>();
         podLabelMap.put("app", agentPodName);

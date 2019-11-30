@@ -132,9 +132,14 @@
 			<artifactId>commons-cli</artifactId>
 			<version>1.4</version>
 		</dependency>
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>3.1.0</version>
+        </dependency>
 
 
-	</dependencies>
+    </dependencies>
 
 	<dependencyManagement>
 		<dependencies>

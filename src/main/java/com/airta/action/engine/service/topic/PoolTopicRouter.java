@@ -1,6 +1,7 @@
 package com.airta.action.engine.service.topic;
 
 import com.airta.action.engine.entity.pool.AgentPool;
+import com.airta.action.engine.entity.pool.PodSessionPool;
 import com.airta.action.engine.entity.report.Element;
 import com.airta.action.engine.k8s.PodTaskProcessor;
 import com.airta.action.engine.parser.JsonParser;
@@ -8,6 +9,9 @@ import com.airta.action.engine.service.ITopicRouter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * @author allenyin
+ */
 @Component
 public class PoolTopicRouter implements ITopicRouter {
 
@@ -39,7 +43,16 @@ public class PoolTopicRouter implements ITopicRouter {
             logger.error("## invalid incoming message for pool scheduler ..");
             return false;
         }
+    }
 
+    public PodSessionPool getPodSessionPool(String poolName) {
+
+        PodSessionPool podSessionPool = podTaskProcessor.readPodSessionPool(poolName);
+        if(podSessionPool!=null) {
+            return podSessionPool;
+        } else {
+            return new PodSessionPool();
+        }
 
     }
 }
