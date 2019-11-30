@@ -103,6 +103,9 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
         logger.info("## register agent {} to pool {} .", agentPod.getMetadata().getName(), agentPool.getPoolName());
 
         PodSessionPool podSessionPool = redisClient.readObject(agentPool.getPoolName());
+        if(podSessionPool==null) {
+            podSessionPool = new PodSessionPool();
+        }
         List<PodSession> podSessionList = podSessionPool.getPodSessionList();
         for(PodSession podSession: podSessionList) {
             if(podSession.getName().equals(agentPod.getMetadata().getName())) {
@@ -128,6 +131,9 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
         logger.info("## unRegister  pool {} .",agentPool.getPoolName());
 
         PodSessionPool podSessionPool = redisClient.readObject(agentPool.getPoolName());
+        if(podSessionPool==null) {
+            podSessionPool = new PodSessionPool();
+        }
         podSessionPool.setPodSessionList(Collections.emptyList());
         redisClient.storeObject(agentPool.getPoolName(), podSessionPool);
     }
