@@ -2,12 +2,12 @@ package com.airta.platform.engine.nanoscript;
 
 import java.util.*;
 
-public class Script {
+public abstract class Script {
     private ArrayList<Block> stmts = null;
-    private Map<String, Object> cxt = null;
+    private Map<String, String> cxt = null;
     private String err = null;
 
-    public Script(String src, Map<String, Object> cxt) throws Exception {
+    public Script(String src, Map<String, String> cxt) throws Exception {
         stmts = Parser.compile(src);
         if (cxt == null) {
             cxt = new LinkedHashMap<>();
@@ -15,8 +15,10 @@ public class Script {
         this.cxt = cxt;
     }
 
-    public void setContextVar(String name, Object t) {
-        if (name != null) cxt.put(name, t);
+    public void setContextVar(String name, String t) {
+        if (name != null) {
+            cxt.put(name, t);
+        }
     }
 
     public Object getContextVar(String name) {
@@ -141,7 +143,7 @@ public class Script {
      * @param variables
      * @return
      */
-    public String evaluateExpression(OP p, Map<String, Object> variables, Object uo) {
+    public String evaluateExpression(OP p, Map<String, String> variables, Object uo) {
         clearError();
         if (p == null) {
             return setErr("empty expression!");
