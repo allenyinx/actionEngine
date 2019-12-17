@@ -1,13 +1,18 @@
 package com.airta.platform.engine.runtime;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public class Task {
+public class Task implements Serializable {
+
     private String id = null;
     private String script = null; // only script we'll have
     private String prepScript = null;
     private Map<String, String> cxtInfo = null;
     private int startNode = 0;
+    private int threads = 1;
+
+    private String rootUrl = "";
 
     public Task(String id) {
         this.id = id;
@@ -51,5 +56,21 @@ public class Task {
 
     public void setPrepScript(String prepScript) {
         this.prepScript = prepScript;
+    }
+
+    public String getRootUrl() {
+        return rootUrl;
+    }
+
+    public void setRootUrl(String rootUrl) {
+        this.rootUrl = rootUrl;
+    }
+
+    public int getThreads() {
+        return threads;
+    }
+
+    public void setThreads(int threads) {
+        this.threads = threads;
     }
 }

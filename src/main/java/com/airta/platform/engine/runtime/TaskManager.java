@@ -142,12 +142,14 @@ public class TaskManager {
     }
 
     public void addTaskAgent(TaskAgent agent) {
-        if (agent != null && agents.indexOf(agent) < 0) agents.add(agent);
+        if (agent != null && agents.indexOf(agent) < 0) {
+            agents.add(agent);
+        }
     }
 
     public void runBlocking() throws Exception {
         if (agents.size() < 1) {
-            throw new Exception("no avaialbe agents to run!");
+            throw new Exception("no available agents to run!");
         }
         if (resultQueue.size() < 1) {
             throw new Exception("nothing to run!");

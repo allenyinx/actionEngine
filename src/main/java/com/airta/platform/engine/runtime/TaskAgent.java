@@ -1,6 +1,7 @@
 package com.airta.platform.engine.runtime;
 
 public interface TaskAgent {
+
     boolean run(Task task) throws Exception;
 
     TaskResult update(String taskId);

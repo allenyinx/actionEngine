@@ -2,6 +2,8 @@ package com.airta.platform.engine.controller;
 
 
 import com.airta.platform.engine.parser.JsonParser;
+import com.airta.platform.engine.runtime.Task;
+import com.airta.platform.engine.service.TaskService;
 import com.airta.platform.engine.service.topic.PoolTopicRouter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,14 +25,22 @@ public class EngineDefaultController {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    private KafkaTemplate kafkaTemplate;
+    private final KafkaTemplate kafkaTemplate;
+
+    private final PoolTopicRouter poolTopicRouter;
+
+    private final JsonParser jsonParser;
+
+    private final TaskService taskService;
 
     @Autowired
-    private PoolTopicRouter poolTopicRouter;
-
-    @Autowired
-    private JsonParser jsonParser;
+    public EngineDefaultController(KafkaTemplate kafkaTemplate, PoolTopicRouter poolTopicRouter,
+                                   JsonParser jsonParser, TaskService taskService) {
+        this.kafkaTemplate = kafkaTemplate;
+        this.poolTopicRouter = poolTopicRouter;
+        this.jsonParser = jsonParser;
+        this.taskService = taskService;
+    }
 
     @GetMapping(value = "/alive")
     public HttpStatus checkMessageStatus() {
@@ -53,6 +63,18 @@ public class EngineDefaultController {
         logger.info("init request received.");
 
         poolTopicRouter.actionOnTopic("general", agentPoolMessage);
+
+        return 200;
+    }
+
+    @PostMapping(value = "/proceedTask", produces = "application/json")
+    @ResponseBody
+    public Object runTasks(Task taskObject) {
+
+        logger.info("proceed task request received.");
+
+        taskService.initTaskManager(taskObject);
+        taskService.runTask();
 
         return 200;
     }
