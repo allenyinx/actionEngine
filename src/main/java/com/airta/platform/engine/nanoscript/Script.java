@@ -3,6 +3,7 @@ package com.airta.platform.engine.nanoscript;
 import java.util.*;
 
 public abstract class Script {
+
     private ArrayList<Block> stmts = null;
     private Map<String, String> cxt = null;
     private String err = null;

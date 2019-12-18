@@ -1,5 +1,6 @@
 package com.airta.platform.engine.service.topic;
 
+import com.airta.platform.engine.config.CommonConfig;
 import com.airta.platform.engine.entity.pool.AgentPool;
 import com.airta.platform.engine.entity.pool.PodSessionPool;
 import com.airta.platform.engine.k8s.PodTaskProcessor;
@@ -14,11 +15,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class PoolTopicRouter implements ITopicRouter {
 
-    @Autowired
-    private PodTaskProcessor podTaskProcessor;
+    private final PodTaskProcessor podTaskProcessor;
+
+    private final JsonParser jsonParser;
 
     @Autowired
-    private JsonParser jsonParser;
+    public PoolTopicRouter(PodTaskProcessor podTaskProcessor, JsonParser jsonParser) {
+        this.podTaskProcessor = podTaskProcessor;
+        this.jsonParser = jsonParser;
+    }
 
     @Override
     public boolean actionOnTopic(Object incomingKeyObj, Object incomingValueObj) {
@@ -31,7 +36,7 @@ public class PoolTopicRouter implements ITopicRouter {
                 logger.info("## now we resolved agentPool: {}", agentPool);
                 agentPool.setPoolName(incomingKeyObj.toString());
 
-                if("init".equals(agentPool.getType())) {
+                if (CommonConfig.DEFAULT_POOL_INIT_TYPE.equals(agentPool.getType())) {
                     return podTaskProcessor.scheduleInitAgent(agentPool);
                 } else {
                     return podTaskProcessor.scheduleCleanAgents(agentPool);
@@ -47,7 +52,7 @@ public class PoolTopicRouter implements ITopicRouter {
     public PodSessionPool getPodSessionPool(String poolName) {
 
         PodSessionPool podSessionPool = podTaskProcessor.readPodSessionPool(poolName);
-        if(podSessionPool!=null) {
+        if (podSessionPool != null) {
             return podSessionPool;
         } else {
             return new PodSessionPool();

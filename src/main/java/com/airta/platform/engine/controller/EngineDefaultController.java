@@ -1,6 +1,7 @@
 package com.airta.platform.engine.controller;
 
 
+import com.airta.platform.engine.config.CommonConfig;
 import com.airta.platform.engine.parser.JsonParser;
 import com.airta.platform.engine.runtime.Task;
 import com.airta.platform.engine.service.TaskService;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.thymeleaf.util.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -86,16 +88,20 @@ public class EngineDefaultController {
     }
 
     @GetMapping(value = "/pool", produces = "application/json")
-    public Object getAgentPool() {
+    public Object getAgentPool(@RequestParam String id) {
 
-        return poolTopicRouter.getPodSessionPool("bing");
+        if (StringUtils.isEmpty(id)) {
+            return poolTopicRouter.getPodSessionPool(CommonConfig.DEFAULT_APP_NAME);
+        } else {
+            return poolTopicRouter.getPodSessionPool(id);
+        }
     }
 
     @GetMapping(value = "/version")
     public Object checkVersion() {
 
         String currentTimestamp = new SimpleDateFormat("yyyyMMddHHmm").format(new Date());
-        return "phase2_1." + currentTimestamp;
+        return "Phase" + CommonConfig.APP_PHASE + "_" + CommonConfig.APP_VERSION + "." + currentTimestamp;
     }
 
 }

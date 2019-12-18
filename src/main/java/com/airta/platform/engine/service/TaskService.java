@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+/**
+ * @author allenyin
+ */
 @Service
 public class TaskService {
 
@@ -32,7 +35,7 @@ public class TaskService {
 
     public void runTask() {
 
-        if(taskManager!=null) {
+        if (taskManager != null) {
             try {
                 taskManager.runBlocking();
             } catch (Exception e) {
@@ -43,8 +46,8 @@ public class TaskService {
 
     private void addAgents(int threads) {
 
-        if(taskManager!=null && threads > 0) {
-            while(threads-->0) {
+        if (taskManager != null && threads > 0) {
+            while (threads-- > 0) {
                 KubeTaskAgent kubeTaskAgent = new KubeTaskAgent();
                 taskManager.addTaskAgent(kubeTaskAgent);
             }

@@ -15,6 +15,8 @@ public class KubeTaskAgent implements TaskAgent {
 
     @Override
     public boolean run(Task task) throws Exception {
+
+        logger.info("## run task: {}", task.getId());
         // produce action message.
         String actionScriptContent = task.getScript();
         Map<String, String> taskCxtInfoMap = task.getCxtInfo();
@@ -42,11 +44,13 @@ public class KubeTaskAgent implements TaskAgent {
     @Override
     public TaskResult update(String taskId) {
         //produce update sitemap message
+        logger.info("## update task: {}", taskId);
         return new TaskResult(TaskStatus.SUCCESS, taskId, 0, 0);
     }
 
     @Override
     public TaskResult cancel(String taskId) {
+        logger.info("## cancel task: {}", taskId);
         return new TaskResult(TaskStatus.CANCELED, taskId, 0, 0);
     }
 
