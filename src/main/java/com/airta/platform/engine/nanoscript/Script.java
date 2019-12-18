@@ -1,8 +1,13 @@
 package com.airta.platform.engine.nanoscript;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.*;
 
 public abstract class Script {
+
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private ArrayList<Block> stmts = null;
     private Map<String, String> cxt = null;
