@@ -32,4 +32,5 @@ Launch
 The quick way:
 
     docker run airta/actionengine:latest
+    kubectl apply -f deployment/deploy_engine.yaml
 
