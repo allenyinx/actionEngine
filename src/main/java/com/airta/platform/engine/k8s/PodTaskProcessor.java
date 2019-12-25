@@ -125,10 +125,12 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
         podSession.setPoolName(agentPool.getPoolName());
 
         List<V1ServicePort> portList = agentService.getSpec().getPorts();
-        for(V1ServicePort v1ServicePort: portList) {
-            if("http".equals(v1ServicePort.getName())) {
+        for (V1ServicePort v1ServicePort : portList) {
+            if ("http".equals(v1ServicePort.getName())) {
                 podSession.setPort(v1ServicePort.getPort());
-                podSession.setNodePort(v1ServicePort.getNodePort());
+                if (v1ServicePort.getNodePort() != null) {
+                    podSession.setNodePort(v1ServicePort.getNodePort());
+                }
                 break;
             }
         }
