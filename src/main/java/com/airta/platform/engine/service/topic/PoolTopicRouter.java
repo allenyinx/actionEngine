@@ -51,6 +51,7 @@ public class PoolTopicRouter implements ITopicRouter {
 
     public PodSessionPool getPodSessionPool(String poolName) {
 
+        logger.info("## reading pool: [{}] info ..", poolName);
         PodSessionPool podSessionPool = podTaskProcessor.readPodSessionPool(poolName);
         if (podSessionPool != null) {
             return podSessionPool;

@@ -71,7 +71,7 @@ public class EngineDefaultController {
     }
 
     @GetMapping(value = "/pool", produces = "application/json")
-    public Object getAgentPool(@RequestParam String id) {
+    public Object getAgentPool(@RequestParam(value = "id", required = false) String id) {
 
         if (StringUtils.isEmpty(id)) {
             return poolTopicRouter.getPodSessionPool(CommonConfig.DEFAULT_APP_NAME);
