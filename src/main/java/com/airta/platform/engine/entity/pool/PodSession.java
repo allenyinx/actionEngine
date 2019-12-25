@@ -9,7 +9,8 @@ public class PodSession implements Serializable {
 
     private String name;
     private String service;
-    private String port;
+    private int port;
+    private int nodePort;
     private String group;
     private String poolName;
 
@@ -29,14 +30,6 @@ public class PodSession implements Serializable {
         this.service = service;
     }
 
-    public String getPort() {
-        return port;
-    }
-
-    public void setPort(String port) {
-        this.port = port;
-    }
-
     public String getGroup() {
         return group;
     }
@@ -51,5 +44,21 @@ public class PodSession implements Serializable {
 
     public void setPoolName(String poolName) {
         this.poolName = poolName;
+    }
+
+    public int getNodePort() {
+        return nodePort;
+    }
+
+    public void setNodePort(int nodePort) {
+        this.nodePort = nodePort;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 }

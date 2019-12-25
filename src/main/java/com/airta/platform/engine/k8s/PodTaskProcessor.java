@@ -112,16 +112,26 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
         List<PodSession> podSessionList = podSessionPool.getPodSessionList();
         for (PodSession podSession : podSessionList) {
             if (podSession.getName().equals(agentPod.getMetadata().getName())) {
-                logger.warn("## exist the pod session, skip register ..");
+                logger.warn("## already exist this pod session, skip register ..");
                 return;
             }
         }
+
         PodSession podSession = new PodSession();
         podSession.setGroup(agentPool.getPoolName());
         podSession.setGroup(String.valueOf(agentPool.getPoolGroup()));
         podSession.setName(agentPod.getMetadata().getName());
         podSession.setService(agentService.getMetadata().getName());
-        podSession.setPort("8201");
+        podSession.setPoolName(agentPool.getPoolName());
+
+        List<V1ServicePort> portList = agentService.getSpec().getPorts();
+        for(V1ServicePort v1ServicePort: portList) {
+            if("http".equals(v1ServicePort.getName())) {
+                podSession.setPort(v1ServicePort.getPort());
+                podSession.setNodePort(v1ServicePort.getNodePort());
+                break;
+            }
+        }
 
         podSessionList.add(podSession);
         logger.info("## PodSession {} added into session List pool {}", podSession.getName(), agentPool.getPoolName());
