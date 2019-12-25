@@ -94,7 +94,7 @@ public class KubeTaskAgent implements TaskAgent {
     private String readRemoteAgentSessionInfo() {
 
         String serviceName = podSession.getService();
-        String servicePort = podSession.getPort();
+        int servicePort = podSession.getPort();
 
         return "http://"+serviceName+":"+servicePort+"/api/run";
     }
