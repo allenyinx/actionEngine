@@ -2,12 +2,16 @@ package com.airta.platform.engine.entity.pool;
 
 import java.io.Serializable;
 
+/**
+ * @author allenyin
+ */
 public class AgentPool implements Serializable {
 
     private String poolName;
     private int agentSize;
     private int poolGroup;
     private String type;
+    private String url;
 
     public String getPoolName() {
         return poolName;
@@ -39,5 +43,13 @@ public class AgentPool implements Serializable {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

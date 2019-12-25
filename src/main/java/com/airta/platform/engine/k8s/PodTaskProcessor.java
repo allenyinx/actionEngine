@@ -76,7 +76,7 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
             int groupId = agentPool.getPoolGroup();
             String agentPodName = AGENTPODPrefix + poolName + "-" + groupId + "-" + index;
 
-            V1Pod agentPod = createPod(agentPodName, agentPool.getPoolName(), agentPool.getPoolGroup());
+            V1Pod agentPod = createPod(agentPodName, agentPool.getPoolName(), agentPool.getPoolGroup(), agentPool.getUrl());
             V1Service agentService = createService(agentPodName, agentPool.getPoolName(), agentPool.getPoolGroup());
 
             waitForPodReady();
@@ -105,13 +105,13 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
         logger.info("## register agent {} to pool {} .", agentPod.getMetadata().getName(), agentPool.getPoolName());
 
         PodSessionPool podSessionPool = redisClient.readObject(agentPool.getPoolName());
-        if(podSessionPool==null) {
+        if (podSessionPool == null) {
             podSessionPool = new PodSessionPool();
             podSessionPool.setPoolName(agentPool.getPoolName());
         }
         List<PodSession> podSessionList = podSessionPool.getPodSessionList();
-        for(PodSession podSession: podSessionList) {
-            if(podSession.getName().equals(agentPod.getMetadata().getName())) {
+        for (PodSession podSession : podSessionList) {
+            if (podSession.getName().equals(agentPod.getMetadata().getName())) {
                 logger.warn("## exist the pod session, skip register ..");
                 return;
             }
@@ -131,10 +131,10 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
 
     private void unRegisterAgentSession(AgentPool agentPool) {
 
-        logger.info("## unRegister  pool {} .",agentPool.getPoolName());
+        logger.info("## unRegister  pool {} .", agentPool.getPoolName());
 
         PodSessionPool podSessionPool = redisClient.readObject(agentPool.getPoolName());
-        if(podSessionPool==null) {
+        if (podSessionPool == null) {
             podSessionPool = new PodSessionPool();
             podSessionPool.setPoolName(agentPool.getPoolName());
         }
@@ -147,12 +147,16 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
         return redisClient.readObject(poolName);
     }
 
-    private V1Pod createPod(String agentPodName, String poolName, int groupId) {
+    private V1Pod createPod(String agentPodName, String poolName, int groupId, String url) {
 
         Map<String, String> podLabelMap = new HashMap<>();
         podLabelMap.put("app", agentPodName);
         podLabelMap.put("pool", poolName);
         podLabelMap.put("group", String.valueOf(groupId));
+
+        V1EnvVar v1EnvVar = new V1EnvVar();
+        v1EnvVar.setName("AgentEntryURL");
+        v1EnvVar.setValue(url);
 
         V1Pod pod =
                 new V1PodBuilder()
@@ -164,6 +168,7 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
                         .addNewContainer()
                         .withName(AGENTContainerName)
                         .withImage(AGENTIMAGE)
+                        .withEnv(v1EnvVar)
                         .endContainer()
                         .endSpec()
                         .build();
@@ -171,7 +176,7 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
         try {
             coreV1Api.createNamespacedPod(NAMESPACE, pod, null, null, null);
         } catch (ApiException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
 
         logger.info("## POD {} created.", pod.getMetadata().getName());
@@ -269,7 +274,7 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
             logger.info("## current checking service: {}", tmpServiceName);
 
             Map<String, String> labelMap = item.getMetadata().getLabels();
-            if (labelMap!=null && labelMap.containsKey("pool") && labelMap.containsKey("group")) {
+            if (labelMap != null && labelMap.containsKey("pool") && labelMap.containsKey("group")) {
                 String meta_poolName = labelMap.get("pool");
                 String meta_groupId = labelMap.get("group");
                 if (poolName.equals(meta_poolName) && String.valueOf(groupId).equals(meta_groupId)) {

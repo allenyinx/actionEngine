@@ -9,7 +9,6 @@ import com.airta.platform.engine.service.topic.PoolTopicRouter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.thymeleaf.util.StringUtils;
@@ -44,29 +43,13 @@ public class EngineDefaultController {
         this.taskService = taskService;
     }
 
-    @GetMapping(value = "/alive")
-    public HttpStatus checkMessageStatus() {
-        try {
-            String message = "test for flow message";
-            logger.info("kafka message ={}", message);
-            kafkaTemplate.send("flow", "key", message);
-            logger.info("sending to kafka successfully");
-            return HttpStatus.OK;
-        } catch (Exception e) {
-            logger.error("sending to kafka fail", e);
-        }
-        return HttpStatus.BAD_REQUEST;
-    }
-
     @PostMapping(value = "/init", produces = "application/json")
     @ResponseBody
     public Object initAgent(Object agentPoolMessage) {
 
         logger.info("init request received.");
 
-        poolTopicRouter.actionOnTopic("general", agentPoolMessage);
-
-        return 200;
+        return poolTopicRouter.actionOnTopic("general", agentPoolMessage);
     }
 
     @PostMapping(value = "/proceedTask", produces = "application/json")
