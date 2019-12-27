@@ -66,10 +66,11 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
         coreV1Api = new CoreV1Api();
     }
 
-    public boolean scheduleInitAgent(AgentPool agentPool) {
+    public List<V1Service> scheduleInitAgent(AgentPool agentPool) {
 
         logger.info("## scheduling {} pod for pool: {}", agentPool.getAgentSize(), agentPool.getPoolName());
 
+        List<V1Service> agentServiceList = new ArrayList<>();
         for (int index = 0; index < agentPool.getAgentSize(); index++) {
 
             String poolName = agentPool.getPoolName();
@@ -79,11 +80,12 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
             V1Pod agentPod = createPod(agentPodName, agentPool.getPoolName(), agentPool.getPoolGroup(), agentPool.getUrl());
             V1Service agentService = createService(agentPodName, agentPool.getPoolName(), agentPool.getPoolGroup());
 
-            waitForPodReady();
+            waitForPodReady(agentPod);
             registerAgentSession(agentPod, agentService, agentPool);
+            agentServiceList.add(agentService);
         }
 
-        return true;
+        return agentServiceList;
     }
 
     public boolean scheduleCleanAgents(AgentPool agentPool) {
@@ -261,10 +263,10 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
                 if (poolName.equals(meta_poolName) && String.valueOf(groupId).equals(meta_groupId)) {
 
                     try {
-                        coreV1Api.deleteNamespacedPodAsync(tmpPodName, NAMESPACE,
-                                null, null, null, 0, null, null, null);
-//                        coreV1Api.deleteNamespacedPod(tmpPodName, NAMESPACE,
-//                                null, null, null, null, null, null);
+//                        coreV1Api.deleteNamespacedPodAsync(tmpPodName, NAMESPACE,
+//                                null, null, null, 0, null, null, null);
+                        coreV1Api.deleteNamespacedPod(tmpPodName, NAMESPACE,
+                                null, null, null, 0, null, null);
                     } catch (ApiException e) {
                         e.printStackTrace();
                     }
@@ -427,7 +429,8 @@ public class PodTaskProcessor implements IInit, IDestroy, IExec, IWait {
     }
 
     @Override
-    public void waitForPodReady() {
+    public void waitForPodReady(V1Pod agentPod) {
+
 
     }
 

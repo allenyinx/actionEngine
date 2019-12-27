@@ -2,7 +2,10 @@ package com.airta.platform.engine.controller;
 
 
 import com.airta.platform.engine.config.CommonConfig;
+import com.airta.platform.engine.entity.pool.AgentPool;
+import com.airta.platform.engine.k8s.PodTaskProcessor;
 import com.airta.platform.engine.parser.JsonParser;
+import com.airta.platform.engine.runtime.InitTask;
 import com.airta.platform.engine.runtime.Task;
 import com.airta.platform.engine.service.TaskService;
 import com.airta.platform.engine.service.topic.PoolTopicRouter;
@@ -34,18 +37,21 @@ public class EngineDefaultController {
 
     private final TaskService taskService;
 
+    private final PodTaskProcessor podTaskProcessor;
+
     @Autowired
     public EngineDefaultController(KafkaTemplate kafkaTemplate, PoolTopicRouter poolTopicRouter,
-                                   JsonParser jsonParser, TaskService taskService) {
+                                   JsonParser jsonParser, TaskService taskService, PodTaskProcessor podTaskProcessor) {
         this.kafkaTemplate = kafkaTemplate;
         this.poolTopicRouter = poolTopicRouter;
         this.jsonParser = jsonParser;
         this.taskService = taskService;
+        this.podTaskProcessor = podTaskProcessor;
     }
 
     @PostMapping(value = "/init", produces = "application/json")
     @ResponseBody
-    public Object initAgent(Object agentPoolMessage) {
+    public Object initAgent(@RequestBody Object agentPoolMessage) {
 
         logger.info("init request received.");
 
@@ -54,12 +60,34 @@ public class EngineDefaultController {
 
     @PostMapping(value = "/proceedTask", produces = "application/json")
     @ResponseBody
-    public Object runTasks(Task taskObject) {
+    public Object runTasks(@RequestBody Task taskObject) {
 
         logger.info("proceed task request received.");
 
         taskService.initTaskManager(taskObject);
         taskService.runTask();
+
+        return 200;
+    }
+
+    @PostMapping(value = "/initTask", produces = "application/json")
+    @ResponseBody
+    public Object initTask(@RequestBody InitTask initTask) {
+
+        logger.info("proceed init task: {}, agent num: {}, request received.", initTask.getTaskId(), initTask.getAgentNumber());
+
+        taskService.initTask(initTask);
+
+        return 200;
+    }
+
+    @PostMapping(value = "/clean")
+    @ResponseBody
+    public Object cleanTask(@RequestBody AgentPool agentPool) {
+
+        logger.info("proceed cleaning task ..");
+
+        podTaskProcessor.scheduleCleanAgents(agentPool);
 
         return 200;
     }

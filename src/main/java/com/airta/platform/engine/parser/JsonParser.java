@@ -35,15 +35,18 @@ public class JsonParser {
 
     public org.json.simple.JSONArray readFronJSONFile() {
 
+        if(!new File(TreeJsonPath).exists()) {
+            logger.warn("## sitemap file haven't been cached, no data ..");
+            return new org.json.simple.JSONArray();
+        }
         JSONParser parser = new JSONParser();
         try {
-
             Object obj = parser.parse(new FileReader(
                     TreeJsonPath));
 
             return (org.json.simple.JSONArray) obj;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getLocalizedMessage());
         }
         return null;
     }

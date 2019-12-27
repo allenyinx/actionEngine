@@ -1,6 +1,5 @@
 package com.airta.platform.engine.message;
 
-import com.airta.platform.engine.service.*;
 import com.airta.platform.engine.service.ITopicRouter;
 import com.airta.platform.engine.service.topic.FlowTopicRouter;
 import com.airta.platform.engine.service.topic.PoolTopicRouter;
@@ -9,6 +8,9 @@ import com.airta.platform.engine.service.topic.UnknownTopicRouter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * @author allenyin
+ */
 @Service
 public class MessageActionFactory {
 
